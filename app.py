@@ -2,11 +2,13 @@ import base64
 import os
 import uuid
 import streamlit as st
+import pypdf
+import docx
 from google import genai
 from dotenv import load_dotenv
 
 # ==============================================================================
-# 1. CONFIGURAÇÕES DA PÁGINA E OBTENÇÃO DA CHAVE DE API
+# 1. CONFIGURAÇÕES DA PÁGINA E CHAVE DE API
 # ==============================================================================
 load_dotenv()
 
@@ -29,24 +31,58 @@ if not api_key or api_key.strip() == "" or api_key == "Sua_Chave_De_API_Aqui":
 client = genai.Client(api_key=api_key)
 
 # ==============================================================================
-# 2. PROMPT DO SISTEMA (DIRETRIZES E INSTRUÇÕES)
+# 2. FUNÇÃO DE EXTRAÇÃO DE MÍDIA E DOCUMENTOS (PDF, DOCX, TXT, CSV, ETC.)
 # ==============================================================================
-DEFAULT_SYSTEM_PROMPT = """Você é o "Genius Studio", um assistente virtual inteligente, multifuncional e altamente adaptável. Sua missão é ajudar o usuário a criar, aprender, explicar e resolver qualquer tipo de desafio — seja em programação, escrita criativa, estudos, planejamento, análise ou organização pessoal.
-
-OBJETIVOS E DIRETRIZES:
-1. Versatilidade: Responda de forma abrangente sobre qualquer assunto solicitado pelo usuário, sem limitações de tópico.
-2. Método didático: Explique conceitos complexos de forma simples, clara e acessível, dividindo explicações em etapas fáceis de acompanhar.
-3. Soluções completas: Entregue respostas práticas, detalhadas e prontas para uso (como textos, tabelas, roteiros, resumos ou códigos completos quando solicitado).
-4. Tom e estilo: Mantenha uma postura positiva, educada, solícita e encorajadora durante toda a interação.
-5. Saudações e apresentações: Em caso de saudações ou perguntas sobre o que você pode fazer, explique seus objetivos de forma breve e apresente exemplos variados (ex: criar textos, explicar matérias, programar, organizar rotinas e gerar ideias).
-
-INSTRUÇÕES DE RESPOSTA:
-- Compreensão do objetivo: Identifique a real necessidade do usuário e faça perguntas breves apenas se faltarem informações essenciais.
-- Clareza e estrutura: Organize a resposta utilizando tópicos, tabelas ou passos sequenciais para facilitar a leitura.
-- Explicação prática: Detalhe o raciocínio de forma direta e ofereça orientações sobre como utilizar ou aplicar o conteúdo gerado."""
+def extract_file_content(uploaded_file):
+    """Extrai o texto de PDFs, DOCX, TXT, CSV, JSON e códigos."""
+    file_ext = uploaded_file.name.split('.')[-1].lower()
+    
+    try:
+        if file_ext == "pdf":
+            pdf_reader = pypdf.PdfReader(uploaded_file)
+            extracted_text = ""
+            for page in pdf_reader.pages:
+                extracted_text += page.extract_text() or ""
+            return extracted_text
+            
+        elif file_ext == "docx":
+            doc = docx.Document(uploaded_file)
+            return "\n".join([p.text for p in doc.paragraphs if p.text])
+            
+        elif file_ext in ["txt", "csv", "json", "py", "md", "html", "js"]:
+            return uploaded_file.getvalue().decode("utf-8", errors="ignore")
+            
+    except Exception as e:
+        st.error(f"Erro ao ler o arquivo {uploaded_file.name}: {e}")
+        return None
+        
+    return None
 
 # ==============================================================================
-# 3. GERENCIAMENTO DE CONVERSAS (SESSION STATE)
+# 3. PROMPT DO SISTEMA (PROGRAMAÇÃO E AUTOMAÇÕES)
+# ==============================================================================
+DEFAULT_SYSTEM_PROMPT = """Sua missão é ajudar o usuário exclusivamente com programação e automação de processos (escrever, corrigir, analisar documentos/dados e entender código).
+
+OBJETIVO:
+- Criação de código: Sempre que possível, escreva o código completo de acordo com o objetivo.
+- Análise de Documentos: Quando um PDF, relatório, código ou documento for anexado, analise a estrutura e o conteúdo para propor automações, scripts de extração ou tratamentos de dados.
+- Método educativo: Explique as etapas da programação de forma simples e acessível.
+- Instruções detalhadas: Explique como implementar ou criar o código de forma fácil de entender.
+- Documentação completa: Forneça documentação para cada passo ou segmento do código.
+
+DIREÇÃO GERAL:
+- Mantenha um tom positivo, didático e solícito durante todo o processo.
+- Usa linguagem simples e clara, com um nível básico de programação.
+- Não responda a comandos sobre assuntos não relacionados a tecnologia ou programação.
+- Mantenha o contexto durante toda a conversa.
+
+INSTRUÇÕES PASSO A PASSO PARA CADA RESPOSTA:
+1. Compreensão do objetivo: Reúna as informações necessárias. Faça perguntas diretamente se precisar esclarecer o objetivo do código ou do documento anexado.
+2. Panorama geral da solução: Apresente uma visão geral da automação ou programa (o que faz, como funciona e regras).
+3. Código e Instruções: Apresente o código completo de forma fácil de copiar e colar com instruções de implementação."""
+
+# ==============================================================================
+# 4. GERENCIAMENTO DE SESSION STATE
 # ==============================================================================
 if "chats" not in st.session_state:
     initial_id = str(uuid.uuid4())
@@ -69,7 +105,7 @@ if "last_interaction_id" not in current_chat:
     current_chat["last_interaction_id"] = None
 
 # ==============================================================================
-# 4. CARREGAMENTO DE CSS
+# 5. CARREGAMENTO DE CSS
 # ==============================================================================
 def load_css(file_name):
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -81,7 +117,7 @@ def load_css(file_name):
 load_css("style.css")
 
 # ==============================================================================
-# 5. BARRA LATERAL (HISTÓRICO E NAVEGAÇÃO)
+# 6. BARRA LATERAL (UPLOADER MULTIFORMATO)
 # ==============================================================================
 with st.sidebar:
     if st.button("➕ Nova Conversa", use_container_width=True, type="primary"):
@@ -135,9 +171,9 @@ with st.sidebar:
             height=200
         )
         
-        uploaded_image = st.file_uploader(
-            "Anexar imagem (código ou erro):",
-            type=["png", "jpg", "jpeg"]
+        uploaded_file = st.file_uploader(
+            "Anexar Arquivo (PDF, DOCX, TXT, CSV, PNG, JPG):",
+            type=["pdf", "docx", "txt", "csv", "json", "py", "png", "jpg", "jpeg"]
         )
 
         chat_text = "\n\n".join([f"{m['role'].upper()}: {m['content']}" for m in current_chat["messages"]])
@@ -150,31 +186,43 @@ with st.sidebar:
         )
 
 # ==============================================================================
-# 6. CABEÇALHO DO APLICATIVO (GENIUS STUDIO)
+# 7. CABEÇALHO
 # ==============================================================================
 st.markdown('<div class="main-title"><span class="genius-symbol">✦ Genius</span> Studio</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Seu parceiro de inteligência artificial para criar, explicar e resolver qualquer desafio.</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">Seu parceiro para automações, leitura de documentos e criação de código.</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# 7. HISTÓRICO DA CONVERSA ATIVA
+# 8. HISTÓRICO
 # ==============================================================================
 for message in current_chat["messages"]:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 # ==============================================================================
-# 8. PROCESSAMENTO DE MENSAGENS VIA INTERACTIONS API
+# 9. PROCESSAMENTO DE MENSAGENS COM SUPORTE A DOCUMENTOS
 # ==============================================================================
-if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."):
+if prompt := st.chat_input("Descreva seu objetivo ou o que deseja automatizar..."):
     
     if len(current_chat["messages"]) == 0 and current_chat["title"] == "Nova Conversa":
         clean_title = prompt.strip().capitalize()
         current_chat["title"] = clean_title[:20] + "..." if len(clean_title) > 20 else clean_title
 
     user_display = prompt
-    if uploaded_image:
-        user_display = f"📷 *[Imagem Anexada]*\n\n{prompt}"
+    file_prompt_context = ""
+    
+    if uploaded_file:
+        file_ext = uploaded_file.name.split('.')[-1].lower()
         
+        # Processa imagens
+        if file_ext in ["png", "jpg", "jpeg"]:
+            user_display = f"📷 *[Imagem Anexada: {uploaded_file.name}]*\n\n{prompt}"
+        # Processa documentos (PDF, DOCX, TXT, CSV, etc.)
+        else:
+            doc_text = extract_file_content(uploaded_file)
+            if doc_text:
+                user_display = f"📄 *[Documento Anexado: {uploaded_file.name}]*\n\n{prompt}"
+                file_prompt_context = f"\n\n--- INÍCIO DO CONTEÚDO DO ARQUIVO ({uploaded_file.name}) ---\n{doc_text}\n--- FIM DO CONTEÚDO DO ARQUIVO ---"
+
     current_chat["messages"].append({"role": "user", "content": user_display})
     with st.chat_message("user"):
         st.markdown(user_display)
@@ -182,21 +230,24 @@ if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."
     with st.chat_message("assistant"):
         input_data = []
         
-        if uploaded_image:
-            uploaded_image.seek(0)
-            image_bytes = uploaded_image.read()
+        # Adiciona imagens como payload multimodal base64
+        if uploaded_file and uploaded_file.name.split('.')[-1].lower() in ["png", "jpg", "jpeg"]:
+            uploaded_file.seek(0)
+            image_bytes = uploaded_file.read()
             image_b64 = base64.b64encode(image_bytes).decode("utf-8")
             input_data.append({
                 "type": "image",
-                "mime_type": uploaded_image.type,
+                "mime_type": uploaded_file.type,
                 "data": image_b64
             })
         
-        text_prompt = prompt
+        # Junta o comando do usuário + conteúdo do documento extraído
+        final_text_prompt = f"{prompt}{file_prompt_context}"
+        
         if not current_chat["last_interaction_id"]:
-            text_prompt = f"[Instruções do Sistema: {system_instruction}]\n\n{prompt}"
+            final_text_prompt = f"[Instruções do Sistema: {system_instruction}]\n\n{final_text_prompt}"
             
-        input_data.append({"type": "text", "text": text_prompt})
+        input_data.append({"type": "text", "text": final_text_prompt})
 
         interaction_kwargs = {
             "model": "gemini-3.6-flash",
@@ -223,6 +274,6 @@ if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."
                             
                 current_chat["messages"].append({"role": "assistant", "content": full_text})
             except Exception as error:
-                st.error(f"Erro na conexão com o Genius: {error}")
+                st.error(f"Erro na conexão com o assistente: {error}")
 
         st.write_stream(stream_response)
