@@ -32,7 +32,25 @@ if not api_key or api_key.strip() == "" or api_key == "Sua_Chave_De_API_Aqui":
 client = genai.Client(api_key=api_key)
 
 # ==============================================================================
-# 2. FUNÇÃO DE EXTRAÇÃO DE MÍDIA E DOCUMENTOS
+# 2. MODOS DE PENSAMENTO & PROMPT DO SISTEMA
+# ==============================================================================
+THINKING_MODES = {
+    "⚡ Mente Flash": "Responda de forma extremamente direta, concisa e objetiva. Vá direto ao ponto sem rodeios.",
+    "🧠 Pensamento Profundo": "Analise a solicitação passo a passo. Forneça explicações detalhadas, raciocínio lógico estruturado, prós/contras e considere múltiplos cenários.",
+    "🎨 Visão Criativa": "Adote uma abordagem inovadora, inspiradora e fluida. Ofereça soluções originais, excelente redação, exemplos práticos e perspectivas fora da caixa.",
+    "🛠️ Arquiteto de Código": "Foque em engenharia de software, código limpo, boas práticas, arquitetura robusta, automações e explicações didáticas de programação."
+}
+
+DEFAULT_SYSTEM_PROMPT = """Você é o Genius, um assistente de inteligência artificial multifuncional, versátil e altamente eficiente.
+Sua missão é ajudar o usuário em qualquer tarefa: desde automações, criação e correção de código, até redação criativa, análise de documentos, planejamento e solução de problemas complexos.
+
+Diretrizes Gerais:
+* Adapte-se ao objetivo do usuário com clareza, didática e eficiência.
+* Mantenha um tom prestativo, inteligente e colaborativo.
+* Forneça respostas bem estruturadas, usando formatação limpa (tabelas, listas, código destacado quando aplicável)."""
+
+# ==============================================================================
+# 3. FUNÇÃO DE EXTRAÇÃO DE MÍDIA E DOCUMENTOS
 # ==============================================================================
 def extract_file_content(uploaded_file):
     """Extrai o texto de PDFs, DOCX, TXT, CSV, JSON e códigos."""
@@ -58,30 +76,6 @@ def extract_file_content(uploaded_file):
         return None
         
     return None
-
-# ==============================================================================
-# 3. PROMPT DO SISTEMA (PROGRAMAÇÃO E AUTOMAÇÕES)
-# ==============================================================================
-DEFAULT_SYSTEM_PROMPT = """Descrição do projeto
-A sua missão é ajudar-me com programação, atividades como escrever, corrigir e entender código. Eu digo-te quais são os meus objetivos e tu ajudas-me a criar o código mais adequado.
-
-Objetivo
-* Criação de código: sempre que possível, escreve o código completo, de acordo com o objetivo.
-* Método educativo: explica as etapas da programação.
-* Instruções detalhadas: explica como implementar ou criar o código de forma fácil de entender.
-* Documentação completa: fornece documentação para cada passo ou segmento do código.
-
-Direção geral
-* Mantém um tom positivo, didático e solícito durante o processo.
-* Usa linguagem simples e clara, com um nível básico de programação.
-* Não respondas a comandos sobre outros assuntos, apenas programação. Se eu mencionar algo fora desse contexto, pede desculpa e redireciona a conversa para temas relacionados com programação.
-* Mantém o contexto durante toda a conversa, garantindo que as ideias e respostas estão sempre alinhadas com os passos anteriores da conversa.
-* Em caso de uma nova saudação ou pergunta sobre o que podes fazer, explica os objetivos, de forma curta, e inclui exemplos.
-
-Instruções passo-a-passo
-* Compreensão do objetivo: reúne informações necessárias para desenvolver o código. Faz perguntas para esclarecer o objetivo, a utilização e quaisquer outros detalhes relevantes, para garantir que entendes o pedido.
-* Mostra um panorama geral da solução: cria um panorama geral do programa, incluindo o que vai fazer e como vai funcionar. Explica os passos do desenvolvimento, suposições e possíveis restrições.
-* Apresenta o programa e as instruções de implementação: apresenta o código de uma forma fácil de copiar e colar, explicando o teu raciocínio e quaisquer variáveis ou parâmetros que podem ser ajustados. Dá instruções detalhadas sobre como implementar o código."""
 
 # ==============================================================================
 # 4. GERENCIAMENTO DE SESSION STATE
@@ -173,10 +167,16 @@ with st.sidebar:
             index=0
         )
         
+        selected_thinking_mode = st.selectbox(
+            "Modo de Pensamento:",
+            list(THINKING_MODES.keys()),
+            index=0
+        )
+        
         system_instruction = st.text_area(
             "Instrução do Sistema:",
             value=DEFAULT_SYSTEM_PROMPT,
-            height=220
+            height=180
         )
         
         uploaded_file = st.file_uploader(
@@ -197,7 +197,7 @@ with st.sidebar:
 # 7. CABEÇALHO
 # ==============================================================================
 st.markdown('<div class="main-title"><span class="genius-symbol">✦ Genius</span> Studio</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Seu parceiro para automações, leitura de documentos e criação de código.</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">Seu parceiro para automações, leitura de documentos, criação de texto e programação.</div>', unsafe_allow_html=True)
 
 # ==============================================================================
 # 8. HISTÓRICO
@@ -207,9 +207,9 @@ for message in current_chat["messages"]:
         st.markdown(message["content"])
 
 # ==============================================================================
-# 9. PROCESSAMENTO DE MENSAGENS COM SUPORTE A DOCUMENTOS
+# 9. PROCESSAMENTO DE MENSAGENS COM SUPORTE A DOCUMENTOS E MODOS DE PENSAMENTO
 # ==============================================================================
-if prompt := st.chat_input("Descreva seu objetivo ou o que deseja automatizar..."):
+if prompt := st.chat_input("Descreva seu objetivo, dúvida ou projeto..."):
     
     if len(current_chat["messages"]) == 0 and current_chat["title"] == "Nova Conversa":
         clean_title = prompt.strip().capitalize()
@@ -246,7 +246,8 @@ if prompt := st.chat_input("Descreva seu objetivo ou o que deseja automatizar...
                 "data": image_b64
             })
         
-        final_text_prompt = f"{prompt}{file_prompt_context}"
+        thinking_instruction = f"[MODO DE PENSAMENTO ATIVO: {selected_thinking_mode}]\n{THINKING_MODES[selected_thinking_mode]}"
+        final_text_prompt = f"{thinking_instruction}\n\n{prompt}{file_prompt_context}"
         
         if not current_chat["last_interaction_id"]:
             final_text_prompt = f"[Instruções do Sistema: {system_instruction}]\n\n{final_text_prompt}"
