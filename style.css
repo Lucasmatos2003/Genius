@@ -1,43 +1,78 @@
-/* ==============================================================================
-   CORREÇÃO DE CONTRASTE E CORES DAS MENSAGENS DE CHAT
-   ============================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
-/* Container da mensagem de chat */
+/* ==============================================================================
+   1. FORÇAR TEMA ESCURO GLOBAL
+   ============================================================================== */
+html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+    background-color: #0F0F17 !important;
+    color: #F1F5F9 !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* Sidebar Dark */
+[data-testid="stSidebar"], [data-testid="stSidebarContent"] {
+    background-color: #13131D !important;
+    border-right: 1px solid #2E2D40 !important;
+}
+
+/* ==============================================================================
+   2. CABEÇALHO GENIUS STUDIO
+   ============================================================================== */
+.main-title {
+    font-size: 2.4rem !important;
+    font-weight: 800 !important;
+    color: #FFFFFF !important;
+    margin-bottom: 0.2rem !important;
+    margin-top: -1rem !important;
+}
+
+.genius-symbol {
+    color: #A855F7 !important;
+    text-shadow: 0 0 15px rgba(168, 85, 247, 0.6);
+}
+
+.sub-title {
+    font-size: 1rem !important;
+    color: #94A3B8 !important;
+    margin-bottom: 2rem !important;
+}
+
+/* ==============================================================================
+   3. CAIXAS DE CHAT E MENSAGENS
+   ============================================================================== */
 .stChatMessage {
     background-color: #181825 !important;
-    border: 1px solid #313244 !important;
+    border: 1px solid #2E2D40 !important;
     border-radius: 12px !important;
     padding: 1rem !important;
     margin-bottom: 1rem !important;
 }
 
-/* Força a cor clara em todos os textos, parágrafos, listas e spans dentro do chat */
 .stChatMessage p, 
 .stChatMessage li, 
 .stChatMessage span, 
 .stChatMessage div {
-    color: #F1F5F9 !important; /* Branco suave de alto contraste */
+    color: #F1F5F9 !important;
     font-size: 1rem !important;
     line-height: 1.6 !important;
 }
 
-/* Destaque para palavras em negrito */
 .stChatMessage strong {
     color: #FFFFFF !important;
-    font-weight: 600 !important;
 }
 
-/* Blocos de código e texto inline */
 .stChatMessage code {
     background-color: #11111B !important;
     color: #89B4FA !important;
-    border-radius: 4px !important;
     padding: 2px 6px !important;
+    border-radius: 4px !important;
 }
 
-/* Caixas de input e sidebar */
-.stTextInput input, .stTextArea textarea {
-    color: #F1F5F9 !important;
+/* ==============================================================================
+   4. INPUTS E BOTÕES
+   ============================================================================== */
+.stTextInput input, .stTextArea textarea, [data-testid="stChatInput"] {
     background-color: #181825 !important;
-    border: 1px solid #313244 !important;
+    color: #F1F5F9 !important;
+    border: 1px solid #2E2D40 !important;
 }

@@ -29,7 +29,30 @@ if not api_key or api_key.strip() == "" or api_key == "Sua_Chave_De_API_Aqui":
 client = genai.Client(api_key=api_key)
 
 # ==============================================================================
-# 2. GERENCIAMENTO DE CONVERSAS (SESSION STATE)
+# 2. PROMPT DO SISTEMA (DIRETRIZES E INSTRUÇÕES)
+# ==============================================================================
+DEFAULT_SYSTEM_PROMPT = """Sua missão é ajudar o usuário exclusivamente com programação (escrever, corrigir e entender código).
+
+OBJETIVO E REGRAS:
+- Criação de código: Sempre que possível, escreva o código completo de acordo com o objetivo.
+- Método educativo: Explique as etapas da programação de forma simples e acessível.
+- Instruções detalhadas: Explique como implementar ou criar o código de forma fácil de entender.
+- Documentação completa: Forneça documentação para cada passo ou segmento do código.
+
+DIREÇÃO GERAL:
+- Mantenha um tom positivo, didático e solícito durante todo o processo.
+- Use linguagem simples e clara, adequada para um nível básico de programação.
+- Não responda a comandos sobre outros assuntos, apenas programação. Se o usuário mencionar algo fora desse contexto, peça desculpa educadamente e redirecione a conversa para temas relacionados com programação.
+- Mantenha o contexto durante toda a conversa, garantindo alinhamento com os passos anteriores.
+- Em caso de uma nova saudação ou pergunta sobre o que você pode fazer, explique os seus objetivos de forma curta e inclua exemplos.
+
+INSTRUÇÕES PASSO A PASSO PARA CADA RESPOSTA:
+1. Compreensão do objetivo: Reúna as informações necessárias. Faça perguntas diretamente se precisar esclarecer o objetivo, utilização ou detalhes.
+2. Panorama geral da solução: Apresente uma visão geral do programa (o que faz, como funciona, passos de desenvolvimento, suposições e possíveis restrições).
+3. Programa e instruções: Apresente o código completo de forma fácil de copiar e colar, explicando o raciocínio, variáveis ajustáveis e instruções detalhadas de implementação."""
+
+# ==============================================================================
+# 3. GERENCIAMENTO DE CONVERSAS (SESSION STATE)
 # ==============================================================================
 if "chats" not in st.session_state:
     initial_id = str(uuid.uuid4())
@@ -52,7 +75,7 @@ if "last_interaction_id" not in current_chat:
     current_chat["last_interaction_id"] = None
 
 # ==============================================================================
-# 3. CARREGAMENTO DE CSS
+# 4. CARREGAMENTO DE CSS
 # ==============================================================================
 def load_css(file_name):
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -64,15 +87,8 @@ def load_css(file_name):
 load_css("style.css")
 
 # ==============================================================================
-# 4. BARRA LATERAL (HISTÓRICO E NAVEGAÇÃO)
+# 5. BARRA LATERAL (HISTÓRICO E NAVEGAÇÃO)
 # ==============================================================================
-DEFAULT_SYSTEM_PROMPT = """Você é o Genius, um assistente de inteligência artificial multifuncional, didático e solícito. Sua missão é ajudar em qualquer tarefa, estudo, criação ou resolução de problemas.
-
-Diretrizes de Atuação:
-1. Método Educativo: Explique o raciocínio por trás das respostas em etapas simples e fáceis de entender.
-2. Versatilidade: Responda com excelência sobre qualquer assunto.
-3. Tom e Linguagem: Mantenha um tom positivo, claro e acessível."""
-
 with st.sidebar:
     if st.button("➕ Nova Conversa", use_container_width=True, type="primary"):
         new_id = str(uuid.uuid4())
@@ -122,11 +138,11 @@ with st.sidebar:
         system_instruction = st.text_area(
             "Instrução do Sistema:",
             value=DEFAULT_SYSTEM_PROMPT,
-            height=180
+            height=200
         )
         
         uploaded_image = st.file_uploader(
-            "Anexar imagem (código ou diagrama):",
+            "Anexar imagem (código ou erro):",
             type=["png", "jpg", "jpeg"]
         )
 
@@ -140,20 +156,20 @@ with st.sidebar:
         )
 
 # ==============================================================================
-# 5. CABEÇALHO DO APLICATIVO
+# 6. CABEÇALHO DO APLICATIVO (GENIUS STUDIO)
 # ==============================================================================
 st.markdown('<div class="main-title"><span class="genius-symbol">✦ Genius</span> Studio</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">Seu parceiro de inteligência artificial para criar, explicar e resolver qualquer desafio.</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# 6. HISTÓRICO DA CONVERSA ATIVA
+# 7. HISTÓRICO DA CONVERSA ATIVA
 # ==============================================================================
 for message in current_chat["messages"]:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 # ==============================================================================
-# 7. PROCESSAMENTO DE MENSAGENS VIA INTERACTIONS API
+# 8. PROCESSAMENTO DE MENSAGENS VIA INTERACTIONS API
 # ==============================================================================
 if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."):
     
