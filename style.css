@@ -13,13 +13,50 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
     display: none !important;
 }
 
+/* Sidebar Dark e Títulos da Sidebar */
 [data-testid="stSidebar"], [data-testid="stSidebarContent"] {
     background-color: #13131D !important;
     border-right: 1px solid #2E2D40 !important;
 }
 
+[data-testid="stSidebar"] p, 
+[data-testid="stSidebar"] span, 
+[data-testid="stSidebar"] strong,
+[data-testid="stSidebar"] div {
+    color: #FFFFFF !important;
+}
+
 /* ==============================================================================
-   2. CABEÇALHO GENIUS STUDIO
+   2. RÓTULOS, RÓTULOS DE WIDGETS E EXPANDER (FERRAMENTAS & AJUSTES)
+   ============================================================================== */
+/* Rótulos acima de inputs (Textarea, File Uploader, etc.) */
+label, 
+[data-testid="stWidgetLabel"], 
+[data-testid="stWidgetLabel"] p, 
+[data-testid="stWidgetLabel"] span {
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+}
+
+/* Estilização do Expander (Ferramentas & Ajustes) */
+[data-testid="stExpander"] {
+    background-color: #181825 !important;
+    border: 1px solid #2E2D40 !important;
+    border-radius: 10px !important;
+}
+
+[data-testid="stExpander"] summary,
+[data-testid="stExpander"] summary p,
+[data-testid="stExpander"] summary span,
+[data-testid="stExpander"] summary svg {
+    color: #FFFFFF !important;
+    fill: #FFFFFF !important;
+    background-color: #181825 !important;
+}
+
+/* ==============================================================================
+   3. CABEÇALHO GENIUS STUDIO
    ============================================================================== */
 .main-title {
     font-size: 2.4rem !important;
@@ -41,7 +78,7 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
 }
 
 /* ==============================================================================
-   3. MENSAGENS E CHAT
+   4. MENSAGENS E CHAT
    ============================================================================== */
 .stChatMessage {
     background-color: #181825 !important;
@@ -69,7 +106,7 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
 }
 
 /* ==============================================================================
-   4. CAMPO DE DIGITAÇÃO (CORREÇÃO DE COR, FUNDO E CONTRASTE)
+   5. CAMPO DE DIGITAÇÃO (INPUT DE CHAT)
    ============================================================================== */
 [data-testid="stBottom"],
 [data-testid="stBottomBlockContainer"],
@@ -78,7 +115,6 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
     border-top: 1px solid #2E2D40 !important;
 }
 
-/* Caixa principal e containers internos */
 [data-testid="stChatInput"],
 [data-testid="stChatInput"] > div,
 [data-testid="stChatInput"] [data-baseweb="base-input"],
@@ -88,13 +124,11 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
     border-radius: 10px !important;
 }
 
-/* Destaque quando o usuário clica ou digita */
 [data-testid="stChatInput"]:focus-within {
     border-color: #A855F7 !important;
     box-shadow: 0 0 12px rgba(168, 85, 247, 0.4) !important;
 }
 
-/* Texto de entrada digitado */
 [data-testid="stChatInput"] textarea {
     color: #FFFFFF !important;
     background-color: transparent !important;
@@ -102,19 +136,11 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
     font-size: 1rem !important;
 }
 
-[data-testid="stChatInput"] textarea:focus {
-    color: #FFFFFF !important;
-    background-color: transparent !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-}
-
-/* Texto de orientação (Placeholder) */
 [data-testid="stChatInput"] textarea::placeholder {
     color: #94A3B8 !important;
     -webkit-text-fill-color: #94A3B8 !important;
 }
 
-/* Botão de envio */
 [data-testid="stChatInput"] button {
     background-color: #A855F7 !important;
     color: #FFFFFF !important;
