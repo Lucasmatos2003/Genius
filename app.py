@@ -32,8 +32,14 @@ if not api_key or api_key.strip() == "" or api_key == "Sua_Chave_De_API_Aqui":
 client = genai.Client(api_key=api_key)
 
 # ==============================================================================
-# 2. MODOS DE PENSAMENTO & PROMPT DO SISTEMA
+# 2. MOTORES DO GENIUS & MODOS DE PENSAMENTO
 # ==============================================================================
+GENIUS_ENGINES = {
+    "⚡ Genius Ultra (Recomendado)": "gemini-3.5-flash",
+    "🧠 Genius Standard": "gemini-2.5-flash",
+    "🚀 Genius Express": "gemini-3.1-flash-lite"
+}
+
 THINKING_MODES = {
     "⚡ Mente Flash": "Responda de forma extremamente direta, concisa e objetiva. Vá direto ao ponto sem rodeios.",
     "🧠 Pensamento Profundo": "Analise a solicitação passo a passo. Forneça explicações detalhadas, raciocínio lógico estruturado, prós/contras e considere múltiplos cenários.",
@@ -161,11 +167,12 @@ with st.sidebar:
     st.markdown("---")
 
     with st.expander("⚙️ Ferramentas & Ajustes", expanded=False):
-        selected_model = st.selectbox(
-            "Modelo Gemini:",
-            ["gemini-3.5-flash", "gemini-2.5-flash", "gemini-3.1-flash-lite"],
+        selected_engine_label = st.selectbox(
+            "Motor do Genius:",
+            list(GENIUS_ENGINES.keys()),
             index=0
         )
+        selected_model = GENIUS_ENGINES[selected_engine_label]
         
         selected_thinking_mode = st.selectbox(
             "Modo de Pensamento:",
