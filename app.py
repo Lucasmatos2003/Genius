@@ -91,8 +91,7 @@ if "chats" not in st.session_state:
     st.session_state["chats"] = {
         initial_id: {
             "title": "Nova Conversa",
-            "messages": [],
-            "last_interaction_id": None
+            "messages": []
         }
     }
     st.session_state["current_chat_id"] = initial_id
@@ -102,9 +101,6 @@ if "current_chat_id" not in st.session_state or st.session_state["current_chat_i
 
 current_chat_id = st.session_state["current_chat_id"]
 current_chat = st.session_state["chats"][current_chat_id]
-
-if "last_interaction_id" not in current_chat:
-    current_chat["last_interaction_id"] = None
 
 # ==============================================================================
 # 5. CARREGAMENTO DE CSS
@@ -126,8 +122,7 @@ with st.sidebar:
         new_id = str(uuid.uuid4())
         st.session_state["chats"][new_id] = {
             "title": "Nova Conversa",
-            "messages": [],
-            "last_interaction_id": None
+            "messages": []
         }
         st.session_state["current_chat_id"] = new_id
         st.rerun()
@@ -156,8 +151,7 @@ with st.sidebar:
                     fallback_id = str(uuid.uuid4())
                     st.session_state["chats"][fallback_id] = {
                         "title": "Nova Conversa",
-                        "messages": [],
-                        "last_interaction_id": None
+                        "messages": []
                     }
                     st.session_state["current_chat_id"] = fallback_id
                 elif st.session_state["current_chat_id"] == chat_id:
@@ -207,14 +201,14 @@ st.markdown('<div class="main-title"><span class="genius-symbol">✦ Genius</spa
 st.markdown('<div class="sub-title">Seu parceiro para automações, leitura de documentos, criação de texto e programação.</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# 8. HISTÓRICO
+# 8. HISTÓRICO VISUAL DA CONVERSA
 # ==============================================================================
 for message in current_chat["messages"]:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 # ==============================================================================
-# 9. PROCESSAMENTO DE MENSAGENS COM SUPORTE A DOCUMENTOS E MODOS DE PENSAMENTO
+# 9. PROCESSAMENTO DE MENSAGENS COM HISTÓRICO RESILIENTE
 # ==============================================================================
 if prompt := st.chat_input("Descreva seu objetivo, dúvida ou projeto..."):
     
@@ -253,31 +247,26 @@ if prompt := st.chat_input("Descreva seu objetivo, dúvida ou projeto..."):
                 "data": image_b64
             })
         
-        thinking_instruction = f"[MODO DE PENSAMENTO ATIVO: {selected_thinking_mode}]\n{THINKING_MODES[selected_thinking_mode]}"
-        final_text_prompt = f"{thinking_instruction}\n\n{prompt}{file_prompt_context}"
+        # Construção do histórico contínuo imune a erros 404
+        history_context = f"[INSTRUÇÃO DO SISTEMA]\n{system_instruction}\n\n[MODO DE PENSAMENTO: {selected_thinking_mode}]\n{THINKING_MODES[selected_thinking_mode]}\n\n--- HISTÓRICO DA CONVERSA ---"
         
-        if not current_chat["last_interaction_id"]:
-            final_text_prompt = f"[Instruções do Sistema: {system_instruction}]\n\n{final_text_prompt}"
+        for msg in current_chat["messages"][:-1]:
+            role_label = "USUÁRIO" if msg["role"] == "user" else "GENIUS"
+            history_context += f"\n\n{role_label}: {msg['content']}"
             
-        input_data.append({"type": "text", "text": final_text_prompt})
-
-        interaction_kwargs = {
-            "model": selected_model,
-            "input": input_data,
-            "stream": True
-        }
+        history_context += f"\n\n--- MENSAGEM ATUAL ---\nUSUÁRIO: {prompt}{file_prompt_context}"
         
-        if current_chat["last_interaction_id"]:
-            interaction_kwargs["previous_interaction_id"] = current_chat["last_interaction_id"]
+        input_data.append({"type": "text", "text": history_context})
 
         def stream_response():
             full_text = ""
             try:
-                stream = client.interactions.create(**interaction_kwargs)
+                stream = client.interactions.create(
+                    model=selected_model,
+                    input=input_data,
+                    stream=True
+                )
                 for event in stream:
-                    if hasattr(event, "interaction") and event.interaction:
-                        current_chat["last_interaction_id"] = event.interaction.id
-                        
                     if event.event_type == "step.delta" and event.delta:
                         if getattr(event.delta, "type", None) == "text" and getattr(event.delta, "text", None):
                             chunk = event.delta.text
