@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
 /* ==============================================================================
-   1. FORÇAR TEMA ESCURO GLOBAL E OCULTAR CABEÇALHO/SHARE
+   1. TEMA ESCURO GLOBAL E OCULTAÇÃO DE ELEMENTOS PADRÃO
    ============================================================================== */
 html, body, .stApp, [data-testid="stAppViewContainer"] {
     background-color: #0F0F17 !important;
@@ -9,20 +9,10 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
     font-family: 'Inter', sans-serif !important;
 }
 
-/* Oculta a barra do topo (Share, GitHub, Estrela e Opções) */
-[data-testid="stHeader"], 
-header, 
-.stAppHeader,
-[data-testid="stToolbar"] {
+[data-testid="stHeader"], header, .stAppHeader, [data-testid="stToolbar"], footer {
     display: none !important;
 }
 
-/* Oculta o rodapé padrão */
-footer {
-    display: none !important;
-}
-
-/* Sidebar Dark */
 [data-testid="stSidebar"], [data-testid="stSidebarContent"] {
     background-color: #13131D !important;
     border-right: 1px solid #2E2D40 !important;
@@ -51,7 +41,7 @@ footer {
 }
 
 /* ==============================================================================
-   3. CAIXAS DE CHAT E MENSAGENS
+   3. MENSAGENS E CHAT
    ============================================================================== */
 .stChatMessage {
     background-color: #181825 !important;
@@ -61,10 +51,7 @@ footer {
     margin-bottom: 1rem !important;
 }
 
-.stChatMessage p, 
-.stChatMessage li, 
-.stChatMessage span, 
-.stChatMessage div {
+.stChatMessage p, .stChatMessage li, .stChatMessage span, .stChatMessage div {
     color: #F1F5F9 !important;
     font-size: 1rem !important;
     line-height: 1.6 !important;
@@ -82,7 +69,7 @@ footer {
 }
 
 /* ==============================================================================
-   4. ÁREA INFERIOR E CAMPO DE DIGITAÇÃO (FOCO E TEXTO VISÍVEL)
+   4. CAMPO DE DIGITAÇÃO (CORREÇÃO DE COR, FUNDO E CONTRASTE)
    ============================================================================== */
 [data-testid="stBottom"],
 [data-testid="stBottomBlockContainer"],
@@ -91,41 +78,45 @@ footer {
     border-top: 1px solid #2E2D40 !important;
 }
 
-/* Estado normal da caixa de entrada */
-[data-testid="stChatInput"] {
+/* Caixa principal e containers internos */
+[data-testid="stChatInput"],
+[data-testid="stChatInput"] > div,
+[data-testid="stChatInput"] [data-baseweb="base-input"],
+[data-testid="stChatInput"] [data-baseweb="textarea"] {
     background-color: #181825 !important;
-    border: 1px solid #313244 !important;
+    border-color: #313244 !important;
     border-radius: 10px !important;
 }
 
-/* Estado ativo/foco enquanto digita (evita que fique branco) */
-[data-testid="stChatInput"]:focus-within,
-[data-testid="stChatInput"]:focus,
-[data-testid="stChatInput"]:hover {
-    background-color: #181825 !important;
+/* Destaque quando o usuário clica ou digita */
+[data-testid="stChatInput"]:focus-within {
     border-color: #A855F7 !important;
-    box-shadow: 0 0 8px rgba(168, 85, 247, 0.3) !important;
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.4) !important;
 }
 
-/* Texto interno do campo de digitação */
+/* Texto de entrada digitado */
 [data-testid="stChatInput"] textarea {
-    color: #F1F5F9 !important;
+    color: #FFFFFF !important;
     background-color: transparent !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    font-size: 1rem !important;
 }
 
 [data-testid="stChatInput"] textarea:focus {
     color: #FFFFFF !important;
     background-color: transparent !important;
+    -webkit-text-fill-color: #FFFFFF !important;
 }
 
-/* Texto de sugestão (Placeholder) */
+/* Texto de orientação (Placeholder) */
 [data-testid="stChatInput"] textarea::placeholder {
     color: #94A3B8 !important;
+    -webkit-text-fill-color: #94A3B8 !important;
 }
 
-/* Outros inputs da barra lateral */
-.stTextInput input, .stTextArea textarea {
-    background-color: #181825 !important;
-    color: #F1F5F9 !important;
-    border: 1px solid #2E2D40 !important;
+/* Botão de envio */
+[data-testid="stChatInput"] button {
+    background-color: #A855F7 !important;
+    color: #FFFFFF !important;
+    border-radius: 8px !important;
 }
