@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
 /* ==============================================================================
-   1. TEMA ESCURO GLOBAL E OCULTAÇÃO DE ELEMENTOS PADRÃO
+   1. TEMA ESCURO GLOBAL
    ============================================================================== */
 html, body, .stApp, [data-testid="stAppViewContainer"] {
     background-color: #0F0F17 !important;
@@ -9,11 +9,51 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
     font-family: 'Inter', sans-serif !important;
 }
 
-[data-testid="stHeader"], header, .stAppHeader, [data-testid="stToolbar"], footer {
+footer {
     display: none !important;
 }
 
-/* Sidebar Dark */
+/* ==============================================================================
+   2. TRATAMENTO DO CABEÇALHO E SETA REABRIR SIDEBAR
+   ============================================================================== */
+/* Deixa o cabeçalho transparente sem esconder o botão da seta */
+[data-testid="stHeader"] {
+    background-color: transparent !important;
+    z-index: 100 !important;
+}
+
+/* Oculta apenas a barra de ferramentas do lado direito (Share, GitHub, status) */
+[data-testid="stToolbar"], 
+[data-testid="stDecoration"],
+[data-testid="stStatusWidget"] {
+    display: none !important;
+}
+
+/* Exibe e estiliza a seta para REABRIR a sidebar quando recolhida */
+[data-testid="stCollapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    top: 0.8rem !important;
+    left: 0.8rem !important;
+}
+
+[data-testid="stCollapsedControl"] button,
+[data-testid="stSidebarCollapseButton"] button {
+    background-color: #13131D !important;
+    color: #FFFFFF !important;
+    border: 1px solid #2E2D40 !important;
+    border-radius: 8px !important;
+}
+
+[data-testid="stCollapsedControl"] svg,
+[data-testid="stSidebarCollapseButton"] svg {
+    color: #FFFFFF !important;
+    fill: #FFFFFF !important;
+}
+
+/* ==============================================================================
+   3. SIDEBAR DARK & COMPONENTES
+   ============================================================================== */
 [data-testid="stSidebar"], [data-testid="stSidebarContent"] {
     background-color: #13131D !important;
     border-right: 1px solid #2E2D40 !important;
@@ -26,9 +66,6 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
     color: #FFFFFF !important;
 }
 
-/* ==============================================================================
-   2. RÓTULOS, EXPANDER E BOTÕES DA SIDEBAR (SEM CAIXAS BRANCAS)
-   ============================================================================== */
 label, 
 [data-testid="stWidgetLabel"], 
 [data-testid="stWidgetLabel"] p, 
@@ -54,7 +91,7 @@ label,
     background-color: #181825 !important;
 }
 
-/* Text Area (Instrução do Sistema) */
+/* Text Area */
 .stTextArea textarea, 
 [data-testid="stTextArea"] textarea {
     background-color: #181825 !important;
@@ -63,7 +100,7 @@ label,
     border-radius: 8px !important;
 }
 
-/* Uploader de Arquivos (PDF, Imagens, etc.) */
+/* Uploader de Arquivos */
 [data-testid="stFileUploader"] {
     background-color: #181825 !important;
     border: 1px dashed #2E2D40 !important;
@@ -85,7 +122,7 @@ label,
     border: 1px solid #3E3D56 !important;
 }
 
-/* Botões da Sidebar (Lista de Chats e Download) */
+/* Botões da Sidebar */
 [data-testid="stSidebar"] .stButton > button,
 [data-testid="stSidebar"] .stDownloadButton > button {
     background-color: #181825 !important;
@@ -115,7 +152,7 @@ label,
 }
 
 /* ==============================================================================
-   3. CABEÇALHO GENIUS STUDIO
+   4. CABEÇALHO GENIUS STUDIO
    ============================================================================== */
 .main-title {
     font-size: 2.4rem !important;
@@ -137,7 +174,7 @@ label,
 }
 
 /* ==============================================================================
-   4. MENSAGENS E CHAT
+   5. MENSAGENS E CHAT
    ============================================================================== */
 .stChatMessage {
     background-color: #181825 !important;
@@ -165,7 +202,7 @@ label,
 }
 
 /* ==============================================================================
-   5. CAMPO DE DIGITAÇÃO (INPUT DE CHAT)
+   6. CAMPO DE DIGITAÇÃO (INPUT DE CHAT)
    ============================================================================== */
 [data-testid="stBottom"],
 [data-testid="stBottomBlockContainer"],
