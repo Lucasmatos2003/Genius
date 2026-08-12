@@ -13,7 +13,7 @@ footer {
     display: none !important;
 }
 
-/* Esconde o cabeçalho superior padrão e botões de controle do Streamlit */
+/* Esconde o cabeçalho superior padrão e elementos utilitários do Streamlit */
 [data-testid="stHeader"], 
 [data-testid="stToolbar"], 
 [data-testid="stDecoration"],
@@ -23,20 +23,14 @@ footer {
 }
 
 /* ==============================================================================
-   2. FIXAÇÃO E OCULTAÇÃO DOS BOTÕES DE RECOLHER SIDEBAR
+   2. FIXAÇÃO DEFINITIVA DA SIDEBAR (IMPEDE DESLOCAMENTO OFF-SCREEN)
    ============================================================================== */
-/* Oculta totalmente os botões que permitem fechar a sidebar */
-[data-testid="stSidebarCollapseButton"],
-[data-testid="stSidebarCollapsedControl"],
-[data-testid="stCollapsedControl"],
-button[aria-label*="sidebar"],
-button[aria-label*="Sidebar"] {
-    display: none !important;
-}
-
-/* Garante que a Sidebar fique sempre visível e com largura fixa */
+section[data-testid="stSidebar"],
 [data-testid="stSidebar"] {
     display: block !important;
+    visibility: visible !important;
+    transform: none !important;
+    margin-left: 0 !important;
     background-color: #13131D !important;
     border-right: 1px solid #2E2D40 !important;
     min-width: 300px !important;
@@ -45,6 +39,16 @@ button[aria-label*="Sidebar"] {
 
 [data-testid="stSidebarContent"] {
     background-color: #13131D !important;
+}
+
+/* Oculta totalmente os botões de alternância (expandir/recolher) */
+[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCollapsedControl"],
+[data-testid="stCollapsedControl"],
+button[aria-label*="sidebar"],
+button[aria-label*="Sidebar"] {
+    display: none !important;
+    visibility: hidden !important;
 }
 
 /* ==============================================================================
@@ -66,7 +70,7 @@ label,
     font-size: 0.95rem !important;
 }
 
-/* Painéis expansíveis da sidebar (Ajustes/Ferramentas) */
+/* Painéis expansíveis da sidebar */
 [data-testid="stExpander"] {
     background-color: #181825 !important;
     border: 1px solid #2E2D40 !important;
