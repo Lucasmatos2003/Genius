@@ -167,6 +167,12 @@ with st.sidebar:
     st.markdown("---")
 
     with st.expander("⚙️ Ferramentas & Ajustes", expanded=False):
+        selected_model = st.selectbox(
+            "Modelo Gemini:",
+            ["gemini-2.5-flash", "gemini-1.5-flash"],
+            index=0
+        )
+        
         system_instruction = st.text_area(
             "Instrução do Sistema:",
             value=DEFAULT_SYSTEM_PROMPT,
@@ -248,7 +254,7 @@ if prompt := st.chat_input("Descreva seu objetivo ou o que deseja automatizar...
         input_data.append({"type": "text", "text": final_text_prompt})
 
         interaction_kwargs = {
-            "model": "gemini-2.5-flash",
+            "model": selected_model,
             "input": input_data,
             "stream": True
         }
