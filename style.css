@@ -10,7 +10,7 @@
     --subtext: #A1A1AA;
 }
 
-/* Oculta elementos da interface nativa do Streamlit Cloud */
+/* Oculta elementos nativos do Streamlit Cloud */
 [data-testid="stHeader"], 
 #MainMenu, 
 header, 
@@ -23,7 +23,7 @@ div[data-testid="stDecoration"] {
     visibility: hidden !important;
 }
 
-/* Fundo Principal da Aplicação */
+/* Fundo Principal */
 .stApp {
     background-color: var(--bg-app) !important;
     color: var(--text-color) !important;
@@ -31,14 +31,13 @@ div[data-testid="stDecoration"] {
 }
 
 /* ==========================================================================
-   2. BARRA LATERAL (CONTRASTE DE TEXTO)
+   2. BARRA LATERAL (TEXTO BRANCO INTEGRAL)
    ========================================================================== */
 [data-testid="stSidebar"] {
     background-color: var(--bg-sidebar) !important;
     border-right: 1px solid var(--border-card) !important;
 }
 
-/* Força a cor branca em todos os rótulos e textos da barra lateral */
 [data-testid="stSidebar"] label,
 [data-testid="stSidebar"] p,
 [data-testid="stSidebar"] span,
@@ -47,7 +46,6 @@ div[data-testid="stDecoration"] {
     color: #FFFFFF !important;
 }
 
-/* Caixas de Texto e Upload da Barra Lateral */
 [data-testid="stSidebar"] textarea, 
 [data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {
     background-color: var(--bg-card) !important;
@@ -60,15 +58,13 @@ div[data-testid="stDecoration"] {
 }
 
 /* ==========================================================================
-   3. CAIXA DE CHAT E RODAPÉ (AJUSTE DO MODO ESCURO)
+   3. CAIXA DE DIGITAÇÃO DO CHAT (TEXTO E PLACEHOLDER EM BRANCO)
    ========================================================================== */
-/* Container inferior fixo */
 [data-testid="stBottom"], 
 [data-testid="stBottom"] > div {
     background-color: var(--bg-app) !important;
 }
 
-/* Campo de digitação de texto do chat */
 [data-testid="stChatInput"],
 [data-testid="stChatInput"] > div,
 div[data-baseweb="input"] {
@@ -77,9 +73,16 @@ div[data-baseweb="input"] {
     border-radius: 12px !important;
 }
 
+/* Texto digitado pelo usuário */
 [data-testid="stChatInput"] textarea {
     color: #FFFFFF !important;
     background-color: transparent !important;
+}
+
+/* Marca d'água / Placeholder do campo */
+[data-testid="stChatInput"] textarea::placeholder {
+    color: #E4E4E7 !important;
+    opacity: 1 !important;
 }
 
 /* ==========================================================================

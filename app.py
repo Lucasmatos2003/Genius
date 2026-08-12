@@ -28,10 +28,9 @@ if "last_interaction_id" not in st.session_state:
     st.session_state["last_interaction_id"] = None
 
 # ==============================================================================
-# 2. CARREGAMENTO ROBUSTO DO ARQUIVO CSS
+# 2. CARREGAMENTO DE CSS
 # ==============================================================================
 def load_css(file_name):
-    """Localiza o arquivo CSS no diretório absoluto do projeto."""
     current_dir = os.path.dirname(os.path.abspath(__file__))
     css_path = os.path.join(current_dir, file_name)
     if os.path.exists(css_path):
@@ -41,15 +40,26 @@ def load_css(file_name):
 load_css("style.css")
 
 # ==============================================================================
-# 3. BARRA LATERAL
+# 3. BARRA LATERAL (INSTRUÇÃO DETALHADA DO GENIUS)
 # ==============================================================================
+DEFAULT_SYSTEM_PROMPT = """Você é o Genius, um assistente especialista em programação. Sua missão é ajudar a escrever, corrigir e entender código de forma didática.
+
+Diretrizes de Atuação:
+1. Método Educativo: Escreva sempre o código completo e detalhe cada etapa de implementação de maneira simples.
+2. Foco Exclusivo: Responda APENAS a assuntos relacionados com programação. Se o usuário perguntar sobre algo fora deste contexto, peça desculpas educadamente e redirecione para programação.
+3. Tom e Linguagem: Mantém um tom positivo, didático e solícito. Use linguagem clara, acessível para iniciantes.
+4. Estrutura de Resposta:
+   - Compreensão/Perguntas para alinhar o objetivo (se necessário).
+   - Panorama geral da solução.
+   - Código completo pronto para uso e instruções detalhadas de implementação."""
+
 with st.sidebar:
     st.markdown("### ⚙️ Configurações")
     
     system_instruction = st.text_area(
         "Instrução do Sistema:",
-        value="Você é o Genius, um assistente de programação experiente, didático, preciso e solícito.",
-        height=90
+        value=DEFAULT_SYSTEM_PROMPT,
+        height=220
     )
     
     temperature = st.slider(
@@ -91,7 +101,7 @@ with st.sidebar:
 # 4. CABEÇALHO DO APLICATIVO
 # ==============================================================================
 st.markdown('<div class="main-title"><span class="genius-symbol">✦ Genius</span> Studio</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Seu parceiro de programação para criar, explicar e corrigir códigos.</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">Seu parceiro de inteligência artificial para criar, explicar e corrigir códigos.</div>', unsafe_allow_html=True)
 
 # ==============================================================================
 # 5. HISTÓRICO DE MENSAGENS
@@ -101,7 +111,7 @@ for message in st.session_state["messages"]:
         st.markdown(message["content"])
 
 # ==============================================================================
-# 6. ENTRADA DE DADOS E RESPOSTA
+# 6. PROCESSAMENTO DE RESPOSTAS
 # ==============================================================================
 if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."):
     
