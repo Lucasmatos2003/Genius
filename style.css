@@ -1,88 +1,99 @@
 /* ==========================================================================
-   1. VARIÁVEIS DE TEMA (PRETO ABSOLUTO)
+   1. VARIÁVEIS DE TEMA E ESTILOS GERAIS
    ========================================================================== */
 :root {
     --bg-app: #000000;
     --bg-sidebar: #0D0D0D;
     --bg-card: #171717;
     --border-card: #262626;
-    --text-color: #F4F4F5;
+    --text-color: #FFFFFF;
     --subtext: #A1A1AA;
 }
 
-/* ==========================================================================
-   2. OCULTAÇÃO DE ELEMENTOS NATIVOS DA NUVEM
-   ========================================================================== */
+/* Oculta elementos da interface nativa do Streamlit Cloud */
 [data-testid="stHeader"], 
 #MainMenu, 
 header, 
 footer,
 [data-testid="manage-app-button"],
+button[title="View app in Streamlit Community Cloud"],
 .stAppDeployButton,
 div[data-testid="stDecoration"] {
     display: none !important;
     visibility: hidden !important;
 }
 
-/* ==========================================================================
-   3. ESTRUTURA PRINCIPAL
-   ========================================================================== */
+/* Fundo Principal da Aplicação */
 .stApp {
     background-color: var(--bg-app) !important;
     color: var(--text-color) !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+/* ==========================================================================
+   2. BARRA LATERAL (CONTRASTE DE TEXTO)
+   ========================================================================== */
 [data-testid="stSidebar"] {
     background-color: var(--bg-sidebar) !important;
     border-right: 1px solid var(--border-card) !important;
 }
 
-/* ==========================================================================
-   4. COMPONENTES DE CHAT E CAIXAS DE ENTRADA
-   ========================================================================== */
-[data-testid="stChatMessage"] {
+/* Força a cor branca em todos os rótulos e textos da barra lateral */
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] {
+    color: #FFFFFF !important;
+}
+
+/* Caixas de Texto e Upload da Barra Lateral */
+[data-testid="stSidebar"] textarea, 
+[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {
     background-color: var(--bg-card) !important;
-    border-radius: 12px !important;
-    padding: 16px !important;
-    margin-bottom: 12px !important;
+    color: #FFFFFF !important;
     border: 1px solid var(--border-card) !important;
 }
 
-/* Garante o fundo preto na barra inferior inteira */
+[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] * {
+    color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   3. CAIXA DE CHAT E RODAPÉ (AJUSTE DO MODO ESCURO)
+   ========================================================================== */
+/* Container inferior fixo */
 [data-testid="stBottom"], 
-[data-testid="stBottom"] > div,
-.stChatInputContainer {
+[data-testid="stBottom"] > div {
     background-color: var(--bg-app) !important;
 }
 
-[data-testid="stChatInput"] {
+/* Campo de digitação de texto do chat */
+[data-testid="stChatInput"],
+[data-testid="stChatInput"] > div,
+div[data-baseweb="input"] {
     background-color: var(--bg-card) !important;
     border: 1px solid var(--border-card) !important;
     border-radius: 12px !important;
 }
 
 [data-testid="stChatInput"] textarea {
-    color: var(--text-color) !important;
+    color: #FFFFFF !important;
     background-color: transparent !important;
 }
 
-.stTextArea textarea, 
-[data-testid="stFileUploaderDropzone"] {
-    background-color: var(--bg-card) !important;
-    color: var(--text-color) !important;
-    border: 1px solid var(--border-card) !important;
-}
-
-[data-testid="stFileUploaderDropzone"] * {
-    color: var(--text-color) !important;
-}
-
 /* ==========================================================================
-   5. MARCA E TÍTULOS
+   4. MENSAGENS E IDENTIDADE VISUAL
    ========================================================================== */
+[data-testid="stChatMessage"] {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-card) !important;
+    border-radius: 12px !important;
+    color: #FFFFFF !important;
+}
+
 .genius-symbol {
-    color: #8B5CF6;
+    color: #8B5CF6 !important;
     font-weight: bold;
 }
 
@@ -90,10 +101,11 @@ div[data-testid="stDecoration"] {
     font-size: 2.2rem;
     font-weight: 700;
     margin-bottom: 0.2rem;
+    color: #FFFFFF !important;
 }
 
 .sub-title {
-    color: var(--subtext);
+    color: var(--subtext) !important;
     font-size: 0.95rem;
     margin-bottom: 1.5rem;
 }
