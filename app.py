@@ -7,10 +7,16 @@ from google.genai import types
 from dotenv import load_dotenv
 
 # ==============================================================================
-# 1. CONFIGURAÇÕES DA PÁGINA E AMBIENTE
+# 1. CONFIGURAÇÕES DA PÁGINA E OBTENÇÃO DA CHAVE DE API
 # ==============================================================================
 load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
+
+# Tenta carregar primeiro das Secrets do Streamlit Cloud, depois do .env local
+api_key = None
+if "GEMINI_API_KEY" in st.secrets:
+    api_key = st.secrets["GEMINI_API_KEY"]
+else:
+    api_key = os.getenv("GEMINI_API_KEY")
 
 st.set_page_config(
     page_title="Genius Studio",
@@ -18,10 +24,11 @@ st.set_page_config(
     layout="wide"
 )
 
-if not api_key or api_key == "Sua_Chave_De_API_Aqui":
-    st.error("⚠️ Chave de API não configurada! Verifique o arquivo .env ou os Secrets do Streamlit.")
+if not api_key or api_key.strip() == "" or api_key == "Sua_Chave_De_API_Aqui":
+    st.error("⚠️ Chave de API não configurada! Adicione a chave GEMINI_API_KEY no painel de Secrets do Streamlit Cloud ou no seu arquivo .env.")
     st.stop()
 
+# Inicializa o cliente diretamente com a chave validada
 client = genai.Client(api_key=api_key)
 
 # ==============================================================================
