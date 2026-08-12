@@ -3,6 +3,7 @@ import os
 import uuid
 import streamlit as st
 from google import genai
+from google.genai import types
 from dotenv import load_dotenv
 
 # ==============================================================================
@@ -31,8 +32,7 @@ if "chats" not in st.session_state:
     st.session_state["chats"] = {
         initial_id: {
             "title": "Nova Conversa",
-            "messages": [],
-            "last_interaction_id": None
+            "messages": []
         }
     }
     st.session_state["current_chat_id"] = initial_id
@@ -62,21 +62,15 @@ DEFAULT_SYSTEM_PROMPT = """Você é o Genius, um assistente de inteligência art
 
 Diretrizes de Atuação:
 1. Método Educativo: Explique o raciocínio por trás das respostas em etapas simples e fáceis de entender.
-2. Versatilidade: Responda com excelência sobre qualquer assunto (estudos, escrita, planejamento, análise de imagens ou código).
-3. Tom e Linguagem: Mantenha um tom positivo, claro e acessível.
-4. Estrutura das Respostas:
-   - Panorama geral da solução/resposta.
-   - Detalhamento passo a passo ou código/texto completo quando aplicável.
-   - Instruções práticas de aplicação."""
+2. Versatilidade: Responda com excelência sobre qualquer assunto.
+3. Tom e Linguagem: Mantenha um tom positivo, claro e acessível."""
 
 with st.sidebar:
-    # Botão de Nova Conversa
     if st.button("➕ Nova Conversa", use_container_width=True, type="primary"):
         new_id = str(uuid.uuid4())
         st.session_state["chats"][new_id] = {
             "title": "Nova Conversa",
-            "messages": [],
-            "last_interaction_id": None
+            "messages": []
         }
         st.session_state["current_chat_id"] = new_id
         st.rerun()
@@ -84,12 +78,10 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("💬 **Sua Lista de Chats**")
 
-    # Lista de Histórico de Chats
     for chat_id, chat_data in list(st.session_state["chats"].items()):
         col_title, col_delete = st.columns([0.82, 0.18])
         is_selected = (chat_id == current_chat_id)
         
-        # Indicador visual para chat ativo
         prefix = "💬 " if not is_selected else "🔹 "
         display_title = f"{prefix}{chat_data['title']}"
         if len(display_title) > 22:
@@ -103,13 +95,11 @@ with st.sidebar:
         with col_delete:
             if st.button("🗑️", key=f"del_{chat_id}"):
                 del st.session_state["chats"][chat_id]
-                # Se apagou todos, recria um vazio
                 if not st.session_state["chats"]:
                     fallback_id = str(uuid.uuid4())
                     st.session_state["chats"][fallback_id] = {
                         "title": "Nova Conversa",
-                        "messages": [],
-                        "last_interaction_id": None
+                        "messages": []
                     }
                     st.session_state["current_chat_id"] = fallback_id
                 elif st.session_state["current_chat_id"] == chat_id:
@@ -118,7 +108,6 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # Painel Sanfona para Configurações Avançadas (Evita poluição visual)
     with st.expander("⚙️ Ferramentas & Ajustes", expanded=False):
         system_instruction = st.text_area(
             "Instrução do Sistema:",
@@ -166,7 +155,6 @@ for message in current_chat["messages"]:
 # ==============================================================================
 if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."):
     
-    # Atualiza o título da conversa se for o primeiro envio
     if len(current_chat["messages"]) == 0 and current_chat["title"] == "Nova Conversa":
         clean_title = prompt.strip().capitalize()
         current_chat["title"] = clean_title[:20] + "..." if len(clean_title) > 20 else clean_title
@@ -180,41 +168,38 @@ if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."
         st.markdown(user_display)
 
     with st.chat_message("assistant"):
-        input_payload = []
-        
-        if uploaded_image:
-            image_bytes = uploaded_image.read()
-            image_b64 = base64.b64encode(image_bytes).decode("utf-8")
-            input_payload.append({
-                "type": "image",
-                "mime_type": uploaded_image.type,
-                "data": image_b64
-            })
-        
-        input_payload.append({"type": "text", "text": f"{system_instruction}\n\n{prompt}"})
+        contents = []
+        for m in current_chat["messages"]:
+            role = "user" if m["role"] == "user" else "model"
+            contents.append(
+                types.Content(
+                    role=role,
+                    parts=[types.Part.from_text(text=m["content"])]
+                )
+            )
 
-        kwargs = {
-            "model": "gemini-3.6-flash",
-            "input": input_payload,
-            "stream": True
-        }
-        
-        if current_chat["last_interaction_id"]:
-            kwargs["previous_interaction_id"] = current_chat["last_interaction_id"]
+        if uploaded_image:
+            uploaded_image.seek(0)
+            image_bytes = uploaded_image.read()
+            contents[-1].parts.insert(0, types.Part.from_bytes(data=image_bytes, mime_type=uploaded_image.type))
+
+        config = types.GenerateContentConfig(
+            system_instruction=system_instruction,
+            temperature=temperature
+        )
 
         def stream_response():
             full_text = ""
             try:
-                stream = client.interactions.create(**kwargs)
-                for event in stream:
-                    if hasattr(event, "interaction") and event.interaction:
-                        current_chat["last_interaction_id"] = event.interaction.id
-                    
-                    if event.event_type == "step.delta" and event.delta:
-                        if getattr(event.delta, "type", None) == "text" and getattr(event.delta, "text", None):
-                            chunk = event.delta.text
-                            full_text += chunk
-                            yield chunk
+                response = client.models.generate_content_stream(
+                    model="gemini-2.5-flash",
+                    contents=contents,
+                    config=config
+                )
+                for chunk in response:
+                    if chunk.text:
+                        full_text += chunk.text
+                        yield chunk.text
                 
                 current_chat["messages"].append({"role": "assistant", "content": full_text})
             except Exception as error:
