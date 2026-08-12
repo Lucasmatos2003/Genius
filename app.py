@@ -169,7 +169,7 @@ with st.sidebar:
     with st.expander("⚙️ Ferramentas & Ajustes", expanded=False):
         selected_model = st.selectbox(
             "Modelo Gemini:",
-            ["gemini-2.5-flash", "gemini-1.5-flash"],
+            ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"],
             index=0
         )
         
