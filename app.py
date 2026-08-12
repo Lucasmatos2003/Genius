@@ -32,7 +32,7 @@ if not api_key or api_key.strip() == "" or api_key == "Sua_Chave_De_API_Aqui":
 client = genai.Client(api_key=api_key)
 
 # ==============================================================================
-# 2. FUNÇÃO DE EXTRAÇÃO DE MÍDIA E DOCUMENTOS (PDF, DOCX, TXT, CSV, ETC.)
+# 2. FUNÇÃO DE EXTRAÇÃO DE MÍDIA E DOCUMENTOS
 # ==============================================================================
 def extract_file_content(uploaded_file):
     """Extrai o texto de PDFs, DOCX, TXT, CSV, JSON e códigos."""
@@ -50,7 +50,7 @@ def extract_file_content(uploaded_file):
             doc = docx.Document(uploaded_file)
             return "\n".join([p.text for p in doc.paragraphs if p.text])
             
-        elif file_ext in ["txt", "csv", "json", "py", "md", "html", "js"]:
+        elif file_ext in ["txt", "csv", "json", "py", "md", "html", "js", "css"]:
             return uploaded_file.getvalue().decode("utf-8", errors="ignore")
             
     except Exception as e:
@@ -62,25 +62,26 @@ def extract_file_content(uploaded_file):
 # ==============================================================================
 # 3. PROMPT DO SISTEMA (PROGRAMAÇÃO E AUTOMAÇÕES)
 # ==============================================================================
-DEFAULT_SYSTEM_PROMPT = """Sua missão é ajudar o usuário exclusivamente com programação e automação de processos (escrever, corrigir, analisar documentos/dados e entender código).
+DEFAULT_SYSTEM_PROMPT = """Descrição do projeto
+A sua missão é ajudar-me com programação, atividades como escrever, corrigir e entender código. Eu digo-te quais são os meus objetivos e tu ajudas-me a criar o código mais adequado.
 
-OBJETIVO:
-- Criação de código: Sempre que possível, escreva o código completo de acordo com o objetivo.
-- Análise de Documentos: Quando um PDF, relatório, código ou documento for anexado, analise a estrutura e o conteúdo para propor automações, scripts de extração ou tratamentos de dados.
-- Método educativo: Explique as etapas da programação de forma simples e acessível.
-- Instruções detalhadas: Explique como implementar ou criar o código de forma fácil de entender.
-- Documentação completa: Forneça documentação para cada passo ou segmento do código.
+Objetivo
+* Criação de código: sempre que possível, escreve o código completo, de acordo com o objetivo.
+* Método educativo: explica as etapas da programação.
+* Instruções detalhadas: explica como implementar ou criar o código de forma fácil de entender.
+* Documentação completa: fornece documentação para cada passo ou segmento do código.
 
-DIREÇÃO GERAL:
-- Mantenha um tom positivo, didático e solícito durante todo o processo.
-- Usa linguagem simples e clara, com um nível básico de programação.
-- Não responda a comandos sobre assuntos não relacionados a tecnologia ou programação.
-- Mantenha o contexto durante toda a conversa.
+Direção geral
+* Mantém um tom positivo, didático e solícito durante o processo.
+* Usa linguagem simples e clara, com um nível básico de programação.
+* Não respondas a comandos sobre outros assuntos, apenas programação. Se eu mencionar algo fora desse contexto, pede desculpa e redireciona a conversa para temas relacionados com programação.
+* Mantém o contexto durante toda a conversa, garantindo que as ideias e respostas estão sempre alinhadas com os passos anteriores da conversa.
+* Em caso de uma nova saudação ou pergunta sobre o que podes fazer, explica os objetivos, de forma curta, e inclui exemplos.
 
-INSTRUÇÕES PASSO A PASSO PARA CADA RESPOSTA:
-1. Compreensão do objetivo: Reúna as informações necessárias. Faça perguntas diretamente se precisar esclarecer o objetivo do código ou do documento anexado.
-2. Panorama geral da solução: Apresente uma visão geral da automação ou programa (o que faz, como funciona e regras).
-3. Código e Instruções: Apresente o código completo de forma fácil de copiar e colar com instruções de implementação."""
+Instruções passo-a-passo
+* Compreensão do objetivo: reúne informações necessárias para desenvolver o código. Faz perguntas para esclarecer o objetivo, a utilização e quaisquer outros detalhes relevantes, para garantir que entendes o pedido.
+* Mostra um panorama geral da solução: cria um panorama geral do programa, incluindo o que vai fazer e como vai funcionar. Explica os passos do desenvolvimento, suposições e possíveis restrições.
+* Apresenta o programa e as instruções de implementação: apresenta o código de uma forma fácil de copiar e colar, explicando o teu raciocínio e quaisquer variáveis ou parâmetros que podem ser ajustados. Dá instruções detalhadas sobre como implementar o código."""
 
 # ==============================================================================
 # 4. GERENCIAMENTO DE SESSION STATE
@@ -118,7 +119,7 @@ def load_css(file_name):
 load_css("style.css")
 
 # ==============================================================================
-# 6. BARRA LATERAL (UPLOADER MULTIFORMATO)
+# 6. BARRA LATERAL
 # ==============================================================================
 with st.sidebar:
     if st.button("➕ Nova Conversa", use_container_width=True, type="primary"):
@@ -169,7 +170,7 @@ with st.sidebar:
         system_instruction = st.text_area(
             "Instrução do Sistema:",
             value=DEFAULT_SYSTEM_PROMPT,
-            height=200
+            height=220
         )
         
         uploaded_file = st.file_uploader(
@@ -214,10 +215,8 @@ if prompt := st.chat_input("Descreva seu objetivo ou o que deseja automatizar...
     if uploaded_file:
         file_ext = uploaded_file.name.split('.')[-1].lower()
         
-        # Processa imagens
         if file_ext in ["png", "jpg", "jpeg"]:
             user_display = f"📷 *[Imagem Anexada: {uploaded_file.name}]*\n\n{prompt}"
-        # Processa documentos (PDF, DOCX, TXT, CSV, etc.)
         else:
             doc_text = extract_file_content(uploaded_file)
             if doc_text:
@@ -231,7 +230,6 @@ if prompt := st.chat_input("Descreva seu objetivo ou o que deseja automatizar...
     with st.chat_message("assistant"):
         input_data = []
         
-        # Adiciona imagens como payload multimodal base64
         if uploaded_file and uploaded_file.name.split('.')[-1].lower() in ["png", "jpg", "jpeg"]:
             uploaded_file.seek(0)
             image_bytes = uploaded_file.read()
@@ -242,7 +240,6 @@ if prompt := st.chat_input("Descreva seu objetivo ou o que deseja automatizar...
                 "data": image_b64
             })
         
-        # Junta o comando do usuário + conteúdo do documento extraído
         final_text_prompt = f"{prompt}{file_prompt_context}"
         
         if not current_chat["last_interaction_id"]:
@@ -251,7 +248,7 @@ if prompt := st.chat_input("Descreva seu objetivo ou o que deseja automatizar...
         input_data.append({"type": "text", "text": final_text_prompt})
 
         interaction_kwargs = {
-            "model": "gemini-3.6-flash",
+            "model": "gemini-2.5-flash",
             "input": input_data,
             "stream": True
         }

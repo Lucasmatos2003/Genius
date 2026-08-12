@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
 /* ==============================================================================
-   1. TEMA ESCURO GLOBAL E ESTRUTURA
+   1. TEMA ESCURO GLOBAL
    ============================================================================== */
 html, body, .stApp, [data-testid="stAppViewContainer"] {
     background-color: #0F0F17 !important;
@@ -13,59 +13,43 @@ footer {
     display: none !important;
 }
 
-/* ==============================================================================
-   2. CABEÇALHO TRANSPARENTE & BOTAO DA SIDEBAR (SEM DISPLAY: NONE NO HEADER)
-   ============================================================================== */
-/* Mantém o cabeçalho existente sem cor de fundo para não esconder a seta */
-header, [data-testid="stHeader"] {
-    background: transparent !important;
-    background-color: transparent !important;
-}
-
-/* Esconde APENAS a barra de ferramentas do canto direito (Deploy, Share, 3 pontos) */
+/* Esconde o cabeçalho superior padrão e botões de controle do Streamlit */
+[data-testid="stHeader"], 
 [data-testid="stToolbar"], 
 [data-testid="stDecoration"],
 [data-testid="stStatusWidget"],
 #MainMenu {
     display: none !important;
-    visibility: hidden !important;
-}
-
-/* Força a visibilidade e estiliza o botão de EXPANDIR/RECOLHER a barra lateral */
-[data-testid="stSidebarCollapsedControl"],
-[data-testid="stCollapsedControl"],
-[data-testid="stSidebarCollapseButton"],
-button[aria-label*="sidebar"],
-button[aria-label*="Sidebar"] {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    background-color: #181825 !important;
-    border: 1px solid #2E2D40 !important;
-    border-radius: 8px !important;
-    margin: 8px !important;
-    z-index: 999999 !important;
-}
-
-/* Garante a cor branca no ícone de seta */
-[data-testid="stSidebarCollapsedControl"] svg,
-[data-testid="stCollapsedControl"] svg,
-[data-testid="stSidebarCollapseButton"] svg,
-button[aria-label*="sidebar"] svg {
-    fill: #FFFFFF !important;
-    color: #FFFFFF !important;
-    stroke: #FFFFFF !important;
-    visibility: visible !important;
 }
 
 /* ==============================================================================
-   3. SIDEBAR DARK & COMPONENTES
+   2. FIXAÇÃO E OCULTAÇÃO DOS BOTÕES DE RECOLHER SIDEBAR
    ============================================================================== */
-[data-testid="stSidebar"], [data-testid="stSidebarContent"] {
-    background-color: #13131D !important;
-    border-right: 1px solid #2E2D40 !important;
+/* Oculta totalmente os botões que permitem fechar a sidebar */
+[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCollapsedControl"],
+[data-testid="stCollapsedControl"],
+button[aria-label*="sidebar"],
+button[aria-label*="Sidebar"] {
+    display: none !important;
 }
 
+/* Garante que a Sidebar fique sempre visível e com largura fixa */
+[data-testid="stSidebar"] {
+    display: block !important;
+    background-color: #13131D !important;
+    border-right: 1px solid #2E2D40 !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
+}
+
+[data-testid="stSidebarContent"] {
+    background-color: #13131D !important;
+}
+
+/* ==============================================================================
+   3. ESTILIZAÇÃO DOS COMPONENTES DA SIDEBAR
+   ============================================================================== */
 [data-testid="stSidebar"] p, 
 [data-testid="stSidebar"] span, 
 [data-testid="stSidebar"] strong,
@@ -82,7 +66,7 @@ label,
     font-size: 0.95rem !important;
 }
 
-/* Expander (Ferramentas & Ajustes) */
+/* Painéis expansíveis da sidebar (Ajustes/Ferramentas) */
 [data-testid="stExpander"] {
     background-color: #181825 !important;
     border: 1px solid #2E2D40 !important;
@@ -98,21 +82,14 @@ label,
     background-color: #181825 !important;
 }
 
-/* Text Area */
+/* Caixas de texto e uploads */
 .stTextArea textarea, 
-[data-testid="stTextArea"] textarea {
+[data-testid="stTextArea"] textarea,
+[data-testid="stFileUploader"] {
     background-color: #181825 !important;
     color: #FFFFFF !important;
     border: 1px solid #2E2D40 !important;
     border-radius: 8px !important;
-}
-
-/* Uploader de Arquivos */
-[data-testid="stFileUploader"] {
-    background-color: #181825 !important;
-    border: 1px dashed #2E2D40 !important;
-    border-radius: 8px !important;
-    padding: 0.5rem !important;
 }
 
 [data-testid="stFileUploader"] section {
@@ -123,12 +100,6 @@ label,
     color: #FFFFFF !important;
 }
 
-[data-testid="stFileUploader"] button {
-    background-color: #28283D !important;
-    color: #FFFFFF !important;
-    border: 1px solid #3E3D56 !important;
-}
-
 /* Botões da Sidebar */
 [data-testid="stSidebar"] .stButton > button,
 [data-testid="stSidebar"] .stDownloadButton > button {
@@ -136,17 +107,14 @@ label,
     color: #FFFFFF !important;
     border: 1px solid #2E2D40 !important;
     border-radius: 8px !important;
-    transition: all 0.2s ease !important;
+    width: 100% !important;
 }
 
-[data-testid="stSidebar"] .stButton > button:hover,
-[data-testid="stSidebar"] .stDownloadButton > button:hover {
+[data-testid="stSidebar"] .stButton > button:hover {
     background-color: #252538 !important;
     border-color: #A855F7 !important;
-    color: #FFFFFF !important;
 }
 
-/* Botão Principal (+ Nova Conversa) */
 [data-testid="stSidebar"] .stButton > button[kind="primary"] {
     background-color: #FF4B4B !important;
     color: #FFFFFF !important;
@@ -154,12 +122,8 @@ label,
     border: none !important;
 }
 
-[data-testid="stSidebar"] .stButton > button[kind="primary"]:hover {
-    background-color: #FF2B2B !important;
-}
-
 /* ==============================================================================
-   4. CABEÇALHO GENIUS STUDIO
+   4. TÍTULOS E ÁREA PRINCIPAL
    ============================================================================== */
 .main-title {
     font-size: 2.4rem !important;
@@ -180,9 +144,7 @@ label,
     margin-bottom: 2rem !important;
 }
 
-/* ==============================================================================
-   5. MENSAGENS E CHAT
-   ============================================================================== */
+/* Mensagens de Chat */
 .stChatMessage {
     background-color: #181825 !important;
     border: 1px solid #2E2D40 !important;
@@ -191,26 +153,11 @@ label,
     margin-bottom: 1rem !important;
 }
 
-.stChatMessage p, .stChatMessage li, .stChatMessage span, .stChatMessage div {
+.stChatMessage p, .stChatMessage li, .stChatMessage span {
     color: #F1F5F9 !important;
-    font-size: 1rem !important;
-    line-height: 1.6 !important;
 }
 
-.stChatMessage strong {
-    color: #FFFFFF !important;
-}
-
-.stChatMessage code {
-    background-color: #11111B !important;
-    color: #89B4FA !important;
-    padding: 2px 6px !important;
-    border-radius: 4px !important;
-}
-
-/* ==============================================================================
-   6. CAMPO DE DIGITAÇÃO (INPUT DE CHAT)
-   ============================================================================== */
+/* Campo de Digitação (Prompt) */
 [data-testid="stBottom"],
 [data-testid="stBottomBlockContainer"],
 .stChatInputContainer {
@@ -227,25 +174,12 @@ label,
     border-radius: 10px !important;
 }
 
-[data-testid="stChatInput"]:focus-within {
-    border-color: #A855F7 !important;
-    box-shadow: 0 0 12px rgba(168, 85, 247, 0.4) !important;
-}
-
 [data-testid="stChatInput"] textarea {
     color: #FFFFFF !important;
-    background-color: transparent !important;
     -webkit-text-fill-color: #FFFFFF !important;
-    font-size: 1rem !important;
-}
-
-[data-testid="stChatInput"] textarea::placeholder {
-    color: #94A3B8 !important;
-    -webkit-text-fill-color: #94A3B8 !important;
 }
 
 [data-testid="stChatInput"] button {
     background-color: #A855F7 !important;
     color: #FFFFFF !important;
-    border-radius: 8px !important;
 }
