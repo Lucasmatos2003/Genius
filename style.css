@@ -35,7 +35,7 @@
 }
 
 /* ------------------------------------------------------------------------------
-   3. BARRA LATERAL (SIDEBAR)
+   3. BARRA LATERAL (SIDEBAR) & CONTROLES DE FORMULÁRIO
    ------------------------------------------------------------------------------ */
 section[data-testid="stSidebar"] {
     background-color: #161925;
@@ -45,6 +45,47 @@ section[data-testid="stSidebar"] {
 section[data-testid="stSidebar"] .stButton button {
     border-radius: 8px;
     font-weight: 500;
+}
+
+/* Correção visual dos rótulos (labels) na barra lateral */
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] span {
+    color: #e0e6ed !important;
+    font-weight: 500 !important;
+}
+
+/* Caixas de seleção (Selectbox) e área de texto (Textarea) */
+section[data-testid="stSidebar"] div[data-baseweb="select"] > div,
+section[data-testid="stSidebar"] textarea,
+section[data-testid="stSidebar"] input {
+    background-color: #1a1d2d !important;
+    color: #ffffff !important;
+    border: 1px solid #282c3f !important;
+    border-radius: 8px !important;
+}
+
+/* Menu suspenso de seleção ativado */
+div[data-baseweb="popover"] ul {
+    background-color: #1a1d2d !important;
+    color: #ffffff !important;
+    border: 1px solid #282c3f !important;
+}
+
+div[data-baseweb="popover"] li {
+    color: #ffffff !important;
+}
+
+/* Caixa de envio de arquivos */
+section[data-testid="stSidebar"] section[data-testid="stFileUploadDropzone"] {
+    background-color: #1a1d2d !important;
+    border: 1px dashed #3a3f58 !important;
+    border-radius: 8px !important;
+}
+
+section[data-testid="stSidebar"] section[data-testid="stFileUploadDropzone"] span,
+section[data-testid="stSidebar"] section[data-testid="stFileUploadDropzone"] small {
+    color: #94a3b8 !important;
 }
 
 /* ------------------------------------------------------------------------------
@@ -59,10 +100,9 @@ div[data-testid="stChatMessage"] {
 }
 
 /* ------------------------------------------------------------------------------
-   5. CORREÇÃO DE CONTRASTE PARA BLOCOS DE CÓDIGO (PYTHON, PIP, ETC)
+   5. CORREÇÃO DE CONTRASTE PARA BLOCOS DE CÓDIGO
    ------------------------------------------------------------------------------ */
 
-/* Bloco principal de código */
 div[data-testid="stCodeBlock"] {
     background-color: #11131f !important;
     border: 1px solid #2e344e !important;
@@ -70,7 +110,6 @@ div[data-testid="stCodeBlock"] {
     margin: 1rem 0 !important;
 }
 
-/* Formatação do texto e das linhas dentro do bloco */
 div[data-testid="stCodeBlock"] pre {
     background-color: transparent !important;
     color: #f8fafc !important;
@@ -82,12 +121,10 @@ div[data-testid="stCodeBlock"] code {
     font-family: 'Fira Code', 'Consolas', monospace !important;
 }
 
-/* Força a visibilidade das palavras-chave do código */
 div[data-testid="stCodeBlock"] span {
     color: #f1f5f9 !important;
 }
 
-/* Código destacado no meio do texto (ex: `exemplo`) */
 :not(pre) > code {
     background-color: #232738 !important;
     color: #38bdf8 !important;
@@ -98,7 +135,7 @@ div[data-testid="stCodeBlock"] span {
 }
 
 /* ------------------------------------------------------------------------------
-   6. CAMPOS DE ENTRADA E BOTÕES DE ENVIO
+   6. CAMPOS DE ENTRADA DO CHAT
    ------------------------------------------------------------------------------ */
 div[data-testid="stChatInput"] {
     border-radius: 10px;
