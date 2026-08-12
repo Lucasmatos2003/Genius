@@ -1,12 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
 /* ==============================================================================
-   1. FORÇAR TEMA ESCURO GLOBAL
+   1. FORÇAR TEMA ESCURO GLOBAL E OCULTAR CABEÇALHO/SHARE
    ============================================================================== */
-html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+html, body, .stApp, [data-testid="stAppViewContainer"] {
     background-color: #0F0F17 !important;
     color: #F1F5F9 !important;
     font-family: 'Inter', sans-serif !important;
+}
+
+/* Oculta a barra do topo (Share, GitHub, Estrela e Opções) */
+[data-testid="stHeader"], 
+header, 
+.stAppHeader,
+[data-testid="stToolbar"] {
+    display: none !important;
+}
+
+/* Oculta o rodapé padrão */
+footer {
+    display: none !important;
 }
 
 /* Sidebar Dark */
@@ -23,7 +36,7 @@ html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"]
     font-weight: 800 !important;
     color: #FFFFFF !important;
     margin-bottom: 0.2rem !important;
-    margin-top: -1rem !important;
+    margin-top: 1rem !important;
 }
 
 .genius-symbol {
@@ -69,9 +82,27 @@ html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"]
 }
 
 /* ==============================================================================
-   4. INPUTS E BOTÕES
+   4. ÁREA INFERIOR (INPUT DE CHAT COM TEMA ESCURO)
    ============================================================================== */
-.stTextInput input, .stTextArea textarea, [data-testid="stChatInput"] {
+[data-testid="stBottom"],
+[data-testid="stBottomBlockContainer"],
+.stChatInputContainer {
+    background-color: #0F0F17 !important;
+    border-top: 1px solid #2E2D40 !important;
+}
+
+[data-testid="stChatInput"] {
+    background-color: #181825 !important;
+    border: 1px solid #313244 !important;
+    border-radius: 10px !important;
+}
+
+[data-testid="stChatInput"] textarea {
+    color: #F1F5F9 !important;
+    background-color: transparent !important;
+}
+
+.stTextInput input, .stTextArea textarea {
     background-color: #181825 !important;
     color: #F1F5F9 !important;
     border: 1px solid #2E2D40 !important;
