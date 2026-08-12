@@ -40,7 +40,7 @@ def load_css(file_name):
 load_css("style.css")
 
 # ==============================================================================
-# 3. BARRA LATERAL (INSTRUÇÃO DETALHADA DO GENIUS)
+# 3. BARRA LATERAL (SEM TÍTULO "CONFIGURAÇÕES")
 # ==============================================================================
 DEFAULT_SYSTEM_PROMPT = """Você é o Genius, um assistente especialista em programação. Sua missão é ajudar a escrever, corrigir e entender código de forma didática.
 
@@ -54,8 +54,6 @@ Diretrizes de Atuação:
    - Código completo pronto para uso e instruções detalhadas de implementação."""
 
 with st.sidebar:
-    st.markdown("### ⚙️ Configurações")
-    
     system_instruction = st.text_area(
         "Instrução do Sistema:",
         value=DEFAULT_SYSTEM_PROMPT,

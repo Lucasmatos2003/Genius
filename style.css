@@ -1,5 +1,5 @@
 /* ==========================================================================
-   1. VARIÁVEIS DE TEMA E ESTILOS GERAIS
+   1. VARIÁVEIS DE TEMA E OCULTAÇÃO DE ELEMENTOS NATIVOS
    ========================================================================== */
 :root {
     --bg-app: #000000;
@@ -10,7 +10,6 @@
     --subtext: #A1A1AA;
 }
 
-/* Oculta elementos nativos do Streamlit Cloud */
 [data-testid="stHeader"], 
 #MainMenu, 
 header, 
@@ -31,7 +30,7 @@ div[data-testid="stDecoration"] {
 }
 
 /* ==========================================================================
-   2. BARRA LATERAL (TEXTO BRANCO INTEGRAL)
+   2. BARRA LATERAL (TEXTOS E CAMPOS)
    ========================================================================== */
 [data-testid="stSidebar"] {
     background-color: var(--bg-sidebar) !important;
@@ -41,24 +40,49 @@ div[data-testid="stDecoration"] {
 [data-testid="stSidebar"] label,
 [data-testid="stSidebar"] p,
 [data-testid="stSidebar"] span,
-[data-testid="stSidebar"] h3,
 [data-testid="stSidebar"] [data-testid="stWidgetLabel"] {
     color: #FFFFFF !important;
 }
 
-[data-testid="stSidebar"] textarea, 
-[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {
+[data-testid="stSidebar"] textarea {
     background-color: var(--bg-card) !important;
     color: #FFFFFF !important;
     border: 1px solid var(--border-card) !important;
 }
 
-[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] * {
-    color: #FFFFFF !important;
+/* Área de Upload (Dropzone) */
+[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {
+    background-color: var(--bg-card) !important;
+    border: 1px dashed var(--border-card) !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] small,
+[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] div {
+    color: var(--subtext) !important;
 }
 
 /* ==========================================================================
-   3. CAIXA DE DIGITAÇÃO DO CHAT (TEXTO E PLACEHOLDER EM BRANCO)
+   3. CORREÇÃO DE CONTRASTE DOS BOTÕES DA BARRA LATERAL
+   ========================================================================== */
+/* Força texto e ícones pretos em qualquer botão da barra lateral */
+[data-testid="stSidebar"] button,
+[data-testid="stSidebar"] button *,
+[data-testid="stSidebar"] .stButton > button *,
+[data-testid="stSidebar"] .stDownloadButton > button * {
+    color: #000000 !important;
+    font-weight: 600 !important;
+}
+
+[data-testid="stSidebar"] .stButton > button,
+[data-testid="stSidebar"] .stDownloadButton > button,
+[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] button {
+    background-color: #FFFFFF !important;
+    border: 1px solid #E4E4E7 !important;
+    border-radius: 8px !important;
+}
+
+/* ==========================================================================
+   4. CAIXA DE DIGITAÇÃO E MENSAGENS DO CHAT
    ========================================================================== */
 [data-testid="stBottom"], 
 [data-testid="stBottom"] > div {
@@ -73,21 +97,16 @@ div[data-baseweb="input"] {
     border-radius: 12px !important;
 }
 
-/* Texto digitado pelo usuário */
 [data-testid="stChatInput"] textarea {
     color: #FFFFFF !important;
     background-color: transparent !important;
 }
 
-/* Marca d'água / Placeholder do campo */
 [data-testid="stChatInput"] textarea::placeholder {
     color: #E4E4E7 !important;
     opacity: 1 !important;
 }
 
-/* ==========================================================================
-   4. MENSAGENS E IDENTIDADE VISUAL
-   ========================================================================== */
 [data-testid="stChatMessage"] {
     background-color: var(--bg-card) !important;
     border: 1px solid var(--border-card) !important;
@@ -95,6 +114,9 @@ div[data-baseweb="input"] {
     color: #FFFFFF !important;
 }
 
+/* ==========================================================================
+   5. MARCA E TÍTULOS
+   ========================================================================== */
 .genius-symbol {
     color: #8B5CF6 !important;
     font-weight: bold;
