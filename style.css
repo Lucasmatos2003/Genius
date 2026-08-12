@@ -13,7 +13,7 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
     display: none !important;
 }
 
-/* Sidebar Dark e Títulos da Sidebar */
+/* Sidebar Dark */
 [data-testid="stSidebar"], [data-testid="stSidebarContent"] {
     background-color: #13131D !important;
     border-right: 1px solid #2E2D40 !important;
@@ -27,9 +27,8 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
 }
 
 /* ==============================================================================
-   2. RÓTULOS, RÓTULOS DE WIDGETS E EXPANDER (FERRAMENTAS & AJUSTES)
+   2. RÓTULOS, EXPANDER E BOTÕES DA SIDEBAR (SEM CAIXAS BRANCAS)
    ============================================================================== */
-/* Rótulos acima de inputs (Textarea, File Uploader, etc.) */
 label, 
 [data-testid="stWidgetLabel"], 
 [data-testid="stWidgetLabel"] p, 
@@ -39,7 +38,7 @@ label,
     font-size: 0.95rem !important;
 }
 
-/* Estilização do Expander (Ferramentas & Ajustes) */
+/* Expander (Ferramentas & Ajustes) */
 [data-testid="stExpander"] {
     background-color: #181825 !important;
     border: 1px solid #2E2D40 !important;
@@ -53,6 +52,66 @@ label,
     color: #FFFFFF !important;
     fill: #FFFFFF !important;
     background-color: #181825 !important;
+}
+
+/* Text Area (Instrução do Sistema) */
+.stTextArea textarea, 
+[data-testid="stTextArea"] textarea {
+    background-color: #181825 !important;
+    color: #FFFFFF !important;
+    border: 1px solid #2E2D40 !important;
+    border-radius: 8px !important;
+}
+
+/* Uploader de Arquivos (PDF, Imagens, etc.) */
+[data-testid="stFileUploader"] {
+    background-color: #181825 !important;
+    border: 1px dashed #2E2D40 !important;
+    border-radius: 8px !important;
+    padding: 0.5rem !important;
+}
+
+[data-testid="stFileUploader"] section {
+    background-color: #181825 !important;
+}
+
+[data-testid="stFileUploader"] section * {
+    color: #FFFFFF !important;
+}
+
+[data-testid="stFileUploader"] button {
+    background-color: #28283D !important;
+    color: #FFFFFF !important;
+    border: 1px solid #3E3D56 !important;
+}
+
+/* Botões da Sidebar (Lista de Chats e Download) */
+[data-testid="stSidebar"] .stButton > button,
+[data-testid="stSidebar"] .stDownloadButton > button {
+    background-color: #181825 !important;
+    color: #FFFFFF !important;
+    border: 1px solid #2E2D40 !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+[data-testid="stSidebar"] .stButton > button:hover,
+[data-testid="stSidebar"] .stDownloadButton > button:hover {
+    background-color: #252538 !important;
+    border-color: #A855F7 !important;
+    color: #FFFFFF !important;
+}
+
+/* Botão Principal (+ Nova Conversa) */
+[data-testid="stSidebar"] .stButton > button[kind="primary"] {
+    background-color: #FF4B4B !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    border: none !important;
+}
+
+[data-testid="stSidebar"] .stButton > button[kind="primary"]:hover {
+    background-color: #FF2B2B !important;
 }
 
 /* ==============================================================================
