@@ -1,5 +1,5 @@
 /* ==========================================================================
-   1. VARIÁVEIS DE TEMA (PRETO ABSOLUTO FIXO)
+   1. VARIÁVEIS DE TEMA (PRETO ABSOLUTO)
    ========================================================================== */
 :root {
     --bg-app: #000000;
@@ -11,53 +11,51 @@
 }
 
 /* ==========================================================================
-   2. OCULTAÇÃO DE ELEMENTOS NATIVOS DO STREAMLIT (PARA DEMO)
+   2. OCULTAÇÃO DE ELEMENTOS NATIVOS DA NUVEM
    ========================================================================== */
 [data-testid="stHeader"], 
 #MainMenu, 
 header, 
 footer,
 [data-testid="manage-app-button"],
-.stAppDeployButton {
+.stAppDeployButton,
+div[data-testid="stDecoration"] {
     display: none !important;
     visibility: hidden !important;
 }
 
 /* ==========================================================================
-   3. ESTRUTURA PRINCIPAL E TIPOGRAFIA
+   3. ESTRUTURA PRINCIPAL
    ========================================================================== */
 .stApp {
-    background-color: var(--bg-app);
-    color: var(--text-color);
+    background-color: var(--bg-app) !important;
+    color: var(--text-color) !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Painel Lateral */
 [data-testid="stSidebar"] {
-    background-color: var(--bg-sidebar);
-    border-right: 1px solid var(--border-card);
+    background-color: var(--bg-sidebar) !important;
+    border-right: 1px solid var(--border-card) !important;
 }
 
 /* ==========================================================================
-   4. COMPONENTES DO CHAT E ÁREA INFERIOR
+   4. COMPONENTES DE CHAT E CAIXAS DE ENTRADA
    ========================================================================== */
-/* Balões de Mensagem */
 [data-testid="stChatMessage"] {
-    background-color: var(--bg-card);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 12px;
-    border: 1px solid var(--border-card);
+    background-color: var(--bg-card) !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    margin-bottom: 12px !important;
+    border: 1px solid var(--border-card) !important;
 }
 
-/* Container Fixo Inferior */
+/* Garante o fundo preto na barra inferior inteira */
 [data-testid="stBottom"], 
 [data-testid="stBottom"] > div,
 .stChatInputContainer {
     background-color: var(--bg-app) !important;
 }
 
-/* Caixa de Digitação */
 [data-testid="stChatInput"] {
     background-color: var(--bg-card) !important;
     border: 1px solid var(--border-card) !important;
@@ -69,7 +67,6 @@ footer,
     background-color: transparent !important;
 }
 
-/* Caixas de Texto e Upload da Barra Lateral */
 .stTextArea textarea, 
 [data-testid="stFileUploaderDropzone"] {
     background-color: var(--bg-card) !important;
@@ -82,10 +79,10 @@ footer,
 }
 
 /* ==========================================================================
-   5. IDENTIDADE VISUAL E TÍTULOS
+   5. MARCA E TÍTULOS
    ========================================================================== */
 .genius-symbol {
-    color: #8B5CF6; /* Cor Roxo Violeta exclusiva */
+    color: #8B5CF6;
     font-weight: bold;
 }
 

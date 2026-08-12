@@ -5,7 +5,7 @@ from google import genai
 from dotenv import load_dotenv
 
 # ==============================================================================
-# 1. CARREGAMENTO DE AMBIENTE E CONFIGURAÇÕES
+# 1. CONFIGURAÇÕES DA PÁGINA E AMBIENTE
 # ==============================================================================
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
@@ -17,7 +17,7 @@ st.set_page_config(
 )
 
 if not api_key or api_key == "Sua_Chave_De_API_Aqui":
-    st.error("⚠️ Chave de API não configurada! Verifique o arquivo .env")
+    st.error("⚠️ Chave de API não configurada! Verifique o arquivo .env ou os Secrets do Streamlit.")
     st.stop()
 
 client = genai.Client(api_key=api_key)
@@ -28,12 +28,23 @@ if "last_interaction_id" not in st.session_state:
     st.session_state["last_interaction_id"] = None
 
 # ==============================================================================
-# 2. BARRA LATERAL (CONTROLES)
+# 2. CARREGAMENTO ROBUSTO DO ARQUIVO CSS
+# ==============================================================================
+def load_css(file_name):
+    """Localiza o arquivo CSS no diretório absoluto do projeto."""
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    css_path = os.path.join(current_dir, file_name)
+    if os.path.exists(css_path):
+        with open(css_path, "r", encoding="utf-8") as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+load_css("style.css")
+
+# ==============================================================================
+# 3. BARRA LATERAL
 # ==============================================================================
 with st.sidebar:
     st.markdown("### ⚙️ Configurações")
-    
-    theme_mode = st.radio("Tema da Interface:", ["Escuro", "Claro"], index=0)
     
     system_instruction = st.text_area(
         "Instrução do Sistema:",
@@ -77,62 +88,20 @@ with st.sidebar:
         )
 
 # ==============================================================================
-# 3. FUNÇÃO PARA CARREGAR O ARQUIVO CSS EXTERNO E TEMAS
-# ==============================================================================
-def load_css(file_path, theme):
-    """Carrega o arquivo CSS externo e define as variáveis do tema selecionado."""
-    if not os.path.exists(file_path):
-        st.warning(f"Arquivo {file_path} não encontrado!")
-        return
-
-    with open(file_path, "r", encoding="utf-8") as f:
-        css_content = f.read()
-
-    # Define o mapa de cores de acordo com o tema escolhido
-    if theme == "Escuro":
-        theme_variables = """
-        :root {
-            --bg-app: #000000;
-            --bg-sidebar: #0D0D0D;
-            --bg-card: #171717;
-            --border-card: #262626;
-            --text-color: #F4F4F5;
-            --subtext: #A1A1AA;
-        }
-        """
-    else:
-        theme_variables = """
-        :root {
-            --bg-app: #F8FAFC;
-            --bg-sidebar: #F1F5F9;
-            --bg-card: #FFFFFF;
-            --border-card: #E2E8F0;
-            --text-color: #0F172A;
-            --subtext: #64748B;
-        }
-        """
-
-    # Injeta as variáveis de tema seguidas do código CSS externo
-    st.markdown(f"<style>{theme_variables}\n{css_content}</style>", unsafe_allow_html=True)
-
-# Aplica a estilização
-load_css("style.css", theme_mode)
-
-# ==============================================================================
 # 4. CABEÇALHO DO APLICATIVO
 # ==============================================================================
 st.markdown('<div class="main-title"><span class="genius-symbol">✦ Genius</span> Studio</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">Seu parceiro de programação para criar, explicar e corrigir códigos.</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# 5. EXIBIÇÃO DO HISTÓRICO DE MENSAGENS
+# 5. HISTÓRICO DE MENSAGENS
 # ==============================================================================
 for message in st.session_state["messages"]:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 # ==============================================================================
-# 6. ENTRADA E PROCESSAMENTO DE RESPOSTA (STREAMING)
+# 6. ENTRADA DE DADOS E RESPOSTA
 # ==============================================================================
 if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."):
     
