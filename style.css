@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
 /* ==============================================================================
-   1. TEMA ESCURO GLOBAL E ESTRUTURA
+   1. TEMA ESCURO GLOBAL
    ============================================================================== */
 html, body, .stApp, [data-testid="stAppViewContainer"] {
     background-color: #0F0F17 !important;
@@ -13,67 +13,51 @@ footer {
     display: none !important;
 }
 
-/* Deixa o cabeçalho transparente para não bloquear a tela */
-[data-testid="stHeader"] {
+/* ==============================================================================
+   2. CABEÇALHO TRANSPARENTE E EXIBIÇÃO DA SETA DA SIDEBAR
+   ============================================================================== */
+/* MANTÉM O HEADER ATIVO MAS TRANSPARENTE (NÃO USAR display: none AQUI) */
+[data-testid="stHeader"], header {
     background-color: transparent !important;
-    z-index: 9999 !important;
+    background: transparent !important;
+    pointer-events: none !important; /* Permite clicar no fundo do app */
+    z-index: 99999 !important;
 }
 
-/* Oculta os botões do canto superior direito (Share, GitHub, Status) */
+/* Oculta apenas os menus do lado direito (Share, Deploy, Status, Três Pontos) */
 [data-testid="stToolbar"], 
 [data-testid="stDecoration"],
-[data-testid="stStatusWidget"] {
+[data-testid="stStatusWidget"],
+#MainMenu {
     display: none !important;
 }
 
-/* ==============================================================================
-   2. FORÇA A EXIBIÇÃO DA SETA DE EXPANDIR/RECOLHER SIDEBAR
-   ============================================================================== */
-/* Mapeia todos os seletores antigos e novos do botão da sidebar */
+/* LIBERA O CLIQUE E ESTILIZA O BOTÃO DE ABRIR/FECHAR A SIDEBAR */
+[data-testid="stHeader"] button,
 [data-testid="stCollapsedControl"],
 [data-testid="stSidebarCollapsedControl"],
 [data-testid="stSidebarCollapseButton"],
-button[aria-label="Expand sidebar"],
-button[aria-label="Open sidebar"],
-button[aria-label="Close sidebar"] {
+button[aria-label*="sidebar"],
+button[aria-label*="Sidebar"] {
+    pointer-events: auto !important; /* Reativa o clique no botão */
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
-    position: fixed !important;
-    top: 12px !important;
-    left: 12px !important;
-    z-index: 999999 !important;
     background-color: #181825 !important;
     border: 1px solid #2E2D40 !important;
     border-radius: 8px !important;
-    width: 40px !important;
-    height: 40px !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    pointer-events: auto !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+    color: #FFFFFF !important;
+    margin: 8px !important;
 }
 
-/* Estiliza os ícones (SVG e caracteres) dentro do botão para branco */
+/* Força a cor branca nos ícones internos da seta */
+[data-testid="stHeader"] button *,
 [data-testid="stCollapsedControl"] *,
-[data-testid="stSidebarCollapsedControl"] *,
-[data-testid="stSidebarCollapseButton"] *,
-button[aria-label="Expand sidebar"] *,
-button[aria-label="Open sidebar"] * {
+[data-testid="stSidebarCollapsedControl"] * {
     color: #FFFFFF !important;
     fill: #FFFFFF !important;
     stroke: #FFFFFF !important;
     visibility: visible !important;
-    opacity: 1 !important;
-}
-
-/* Efeito Hover no botão */
-[data-testid="stCollapsedControl"]:hover,
-[data-testid="stSidebarCollapsedControl"]:hover,
-button[aria-label="Expand sidebar"]:hover {
-    background-color: #252538 !important;
-    border-color: #A855F7 !important;
 }
 
 /* ==============================================================================
@@ -116,7 +100,7 @@ label,
     background-color: #181825 !important;
 }
 
-/* Text Area */
+/* Text Area (Instrução do Sistema) */
 .stTextArea textarea, 
 [data-testid="stTextArea"] textarea {
     background-color: #181825 !important;

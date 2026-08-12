@@ -21,7 +21,8 @@ else:
 st.set_page_config(
     page_title="Genius Studio",
     page_icon="✦",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 if not api_key or api_key.strip() == "" or api_key == "Sua_Chave_De_API_Aqui":
