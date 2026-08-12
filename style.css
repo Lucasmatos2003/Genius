@@ -1,5 +1,5 @@
 /* ==============================================================================
-   GENIUS STUDIO - TEMA ESCURO UNIFICADO E BARRA DE ENTRADA (style.css)
+   GENIUS STUDIO - TEMA ESCURO COMPLETO (style.css)
    ============================================================================== */
 
 /* ------------------------------------------------------------------------------
@@ -193,9 +193,9 @@ section[data-testid="stSidebar"] input {
 }
 
 /* ------------------------------------------------------------------------------
-   8. REDESIGN DA BARRA DE ENTRADA DO CHAT (RODAPÉ)
+   8. BARRA DE ENTRADA DO CHAT (CORREÇÃO DO QUADRO BRANCO)
    ------------------------------------------------------------------------------ */
-/* Remove o fundo branco do wrapper inferior do Streamlit */
+/* Remove fundo do container inferior do Streamlit */
 div[data-testid="stBottom"],
 div[data-testid="stBottom"] > div,
 div[data-testid="stChatInputContainer"] {
@@ -205,7 +205,7 @@ div[data-testid="stChatInputContainer"] {
     box-shadow: none !important;
 }
 
-/* Caixa principal de digitação */
+/* Moldura externa escura */
 div[data-testid="stChatInput"] {
     background-color: #1a1d2d !important;
     border: 1px solid #282c3f !important;
@@ -215,13 +215,15 @@ div[data-testid="stChatInput"] {
     transition: all 0.2s ease-in-out !important;
 }
 
-/* Destaque quando o campo está ativo (foco) */
-div[data-testid="stChatInput"]:focus-within {
-    border-color: #7c3aed !important;
-    box-shadow: 0 0 14px rgba(124, 58, 237, 0.3) !important;
+/* Remove a cor branca dos wrappers internos do Streamlit/BaseWeb */
+div[data-testid="stChatInput"] > div,
+div[data-testid="stChatInput"] div[data-baseweb="base-input"],
+div[data-testid="stChatInput"] div[data-baseweb="input"] {
+    background-color: transparent !important;
+    border: none !important;
 }
 
-/* Área de texto onde o usuário digita */
+/* Área de digitação */
 div[data-testid="stChatInput"] textarea {
     background-color: transparent !important;
     color: #ffffff !important;
@@ -230,15 +232,20 @@ div[data-testid="stChatInput"] textarea {
 }
 
 div[data-testid="stChatInput"] textarea::placeholder {
-    color: #64748b !important;
+    color: #94a3b8 !important;
 }
 
-/* Botão de Envio (Ícone de Seta) */
+/* Efeito de foco quando o usuário clica para digitar */
+div[data-testid="stChatInput"]:focus-within {
+    border-color: #7c3aed !important;
+    box-shadow: 0 0 14px rgba(124, 58, 237, 0.35) !important;
+}
+
+/* Botão de envio (Seta) */
 div[data-testid="stChatInput"] button {
     background-color: #7c3aed !important;
     border-radius: 10px !important;
     border: none !important;
-    transition: background-color 0.2s ease !important;
 }
 
 div[data-testid="stChatInput"] button * {
