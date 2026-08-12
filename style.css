@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
 /* ==============================================================================
-   1. TEMA ESCURO GLOBAL
+   1. TEMA ESCURO GLOBAL E ESTRUTURA
    ============================================================================== */
 html, body, .stApp, [data-testid="stAppViewContainer"] {
     background-color: #0F0F17 !important;
@@ -14,48 +14,46 @@ footer {
 }
 
 /* ==============================================================================
-   2. CABEÇALHO TRANSPARENTE E EXIBIÇÃO DA SETA DA SIDEBAR
+   2. CABEÇALHO TRANSPARENTE & BOTAO DA SIDEBAR (SEM DISPLAY: NONE NO HEADER)
    ============================================================================== */
-/* MANTÉM O HEADER ATIVO MAS TRANSPARENTE (NÃO USAR display: none AQUI) */
-[data-testid="stHeader"], header {
-    background-color: transparent !important;
+/* Mantém o cabeçalho existente sem cor de fundo para não esconder a seta */
+header, [data-testid="stHeader"] {
     background: transparent !important;
-    pointer-events: none !important; /* Permite clicar no fundo do app */
-    z-index: 99999 !important;
+    background-color: transparent !important;
 }
 
-/* Oculta apenas os menus do lado direito (Share, Deploy, Status, Três Pontos) */
+/* Esconde APENAS a barra de ferramentas do canto direito (Deploy, Share, 3 pontos) */
 [data-testid="stToolbar"], 
 [data-testid="stDecoration"],
 [data-testid="stStatusWidget"],
 #MainMenu {
     display: none !important;
+    visibility: hidden !important;
 }
 
-/* LIBERA O CLIQUE E ESTILIZA O BOTÃO DE ABRIR/FECHAR A SIDEBAR */
-[data-testid="stHeader"] button,
-[data-testid="stCollapsedControl"],
+/* Força a visibilidade e estiliza o botão de EXPANDIR/RECOLHER a barra lateral */
 [data-testid="stSidebarCollapsedControl"],
+[data-testid="stCollapsedControl"],
 [data-testid="stSidebarCollapseButton"],
 button[aria-label*="sidebar"],
 button[aria-label*="Sidebar"] {
-    pointer-events: auto !important; /* Reativa o clique no botão */
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
     background-color: #181825 !important;
     border: 1px solid #2E2D40 !important;
     border-radius: 8px !important;
-    color: #FFFFFF !important;
     margin: 8px !important;
+    z-index: 999999 !important;
 }
 
-/* Força a cor branca nos ícones internos da seta */
-[data-testid="stHeader"] button *,
-[data-testid="stCollapsedControl"] *,
-[data-testid="stSidebarCollapsedControl"] * {
-    color: #FFFFFF !important;
+/* Garante a cor branca no ícone de seta */
+[data-testid="stSidebarCollapsedControl"] svg,
+[data-testid="stCollapsedControl"] svg,
+[data-testid="stSidebarCollapseButton"] svg,
+button[aria-label*="sidebar"] svg {
     fill: #FFFFFF !important;
+    color: #FFFFFF !important;
     stroke: #FFFFFF !important;
     visibility: visible !important;
 }
@@ -100,7 +98,7 @@ label,
     background-color: #181825 !important;
 }
 
-/* Text Area (Instrução do Sistema) */
+/* Text Area */
 .stTextArea textarea, 
 [data-testid="stTextArea"] textarea {
     background-color: #181825 !important;
