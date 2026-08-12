@@ -1,9 +1,9 @@
 /* ==============================================================================
-   GENIUS STUDIO - CORREÇÃO GLOBAL DE TEMAS E CONTAINERS (style.css)
+   GENIUS STUDIO - DESIGN SISTEMA ESCURO PREMIUM (style.css)
    ============================================================================== */
 
 /* ------------------------------------------------------------------------------
-   1. ESTRUTURA GLOBAL E FUNDO DA APLICAÇÃO
+   1. ESTRUTURA GLOBAL E FUNDO
    ------------------------------------------------------------------------------ */
 html, body, .stApp {
     background-color: #0f111a !important;
@@ -11,9 +11,9 @@ html, body, .stApp {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Oculta/ajusta o fundo transparente do cabeçalho do Streamlit */
+/* Barra superior nativa do Streamlit */
 header[data-testid="stHeader"] {
-    background-color: rgba(15, 17, 26, 0.9) !important;
+    background-color: rgba(15, 17, 26, 0.8) !important;
 }
 
 header[data-testid="stHeader"] * {
@@ -21,112 +21,88 @@ header[data-testid="stHeader"] * {
 }
 
 /* ------------------------------------------------------------------------------
-   2. CORREÇÃO DA BARRA INFERIOR DE CHAT (ELIMINA O FUNDO BRANCO NO RODAPÉ)
+   2. CABEÇALHO PRINCIPAL (RESTAURAÇÃO DO DEGRADÊ E BELEZA)
    ------------------------------------------------------------------------------ */
-div[data-testid="stBottom"],
-div[data-testid="stBottom"] > div,
-footer {
-    background-color: #0f111a !important;
-    background-image: none !important;
-}
-
-/* Campo de entrada do Chat */
-div[data-testid="stChatInput"] {
-    background-color: #1a1d2d !important;
-    border: 1px solid #3b4261 !important;
-    border-radius: 12px !important;
-}
-
-div[data-testid="stChatInput"] textarea {
-    background-color: transparent !important;
+.main-title {
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
     color: #ffffff !important;
-    border: none !important;
+    margin-bottom: 0.2rem !important;
+    letter-spacing: -0.02em !important;
 }
 
-div[data-testid="stChatInput"] textarea::placeholder {
+.genius-symbol {
+    background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    display: inline-block !important;
+}
+
+.sub-title {
+    font-size: 1rem !important;
     color: #94a3b8 !important;
-}
-
-div[data-testid="stChatInput"] button {
-    background-color: #282c3f !important;
-    color: #ffffff !important;
-    border-radius: 8px !important;
-    border: none !important;
-}
-
-div[data-testid="stChatInput"] button:hover {
-    background-color: #7c3aed !important;
+    margin-bottom: 1.8rem !important;
 }
 
 /* ------------------------------------------------------------------------------
-   3. BARRA LATERAL (SIDEBAR) & ESTILIZAÇÃO COMPLETA
+   3. BARRA LATERAL (SIDEBAR)
    ------------------------------------------------------------------------------ */
 section[data-testid="stSidebar"],
 div[data-testid="stSidebarContent"] {
     background-color: #161925 !important;
-    border-right: 1px solid #282c3f !important;
+    border-right: 1px solid #232738 !important;
 }
 
-section[data-testid="stSidebar"] *,
+/* Rótulos e textos da Sidebar */
 section[data-testid="stSidebar"] label,
 section[data-testid="stSidebar"] p,
 section[data-testid="stSidebar"] span {
     color: #e0e6ed !important;
+    font-weight: 500 !important;
 }
 
 /* ------------------------------------------------------------------------------
-   4. COMPONENTES DE FORMULÁRIO (SELECTBOX, EXPANDER, UPLOAD, TEXTAREA)
+   4. SELETORES (MOTOR DO GENIUS & MODO DE PENSAMENTO)
    ------------------------------------------------------------------------------ */
-/* Menu Sanfona (Expander Ferramentas & Ajustes) */
-div[data-testid="stExpander"] {
-    background-color: #161925 !important;
-    border: 1px solid #282c3f !important;
-    border-radius: 8px !important;
-}
-
-div[data-testid="stExpander"] summary {
+div[data-baseweb="select"] {
     background-color: #1a1d2d !important;
-    color: #ffffff !important;
     border-radius: 8px !important;
 }
 
-/* Caixas de seleção (Selectbox BaseWeb) */
-div[data-baseweb="select"] > div,
-div[data-baseweb="input"] {
+div[data-baseweb="select"] > div {
     background-color: #1a1d2d !important;
     border: 1px solid #282c3f !important;
     border-radius: 8px !important;
-}
-
-div[data-baseweb="select"] * {
-    background-color: transparent !important;
     color: #ffffff !important;
 }
 
-/* Menu suspenso de opções que abre ao clicar no Selectbox */
+/* Ajuste da seta / ícone do menu suspenso */
+div[data-baseweb="select"] svg {
+    fill: #94a3b8 !important;
+    color: #94a3b8 !important;
+}
+
+/* Menu de opções abertas */
 div[data-baseweb="popover"] div,
 div[data-baseweb="menu"] {
     background-color: #1a1d2d !important;
     color: #ffffff !important;
+    border: 1px solid #282c3f !important;
 }
 
 div[data-baseweb="option"]:hover {
     background-color: #282c3f !important;
 }
 
-/* Caixas de Texto (Textarea / Inputs gerais) */
-textarea, input {
-    background-color: #1a1d2d !important;
-    color: #ffffff !important;
-    border: 1px solid #282c3f !important;
-    border-radius: 8px !important;
-}
-
-/* Área de Upload de Arquivos */
+/* ------------------------------------------------------------------------------
+   5. ÁREA DE UPLOAD DE ARQUIVOS (CORREÇÃO DO BLOCO BRANCO)
+   ------------------------------------------------------------------------------ */
+div[data-testid="stFileUploader"] section,
 section[data-testid="stFileUploadDropzone"] {
     background-color: #1a1d2d !important;
     border: 1px dashed #3b4261 !important;
-    border-radius: 8px !important;
+    border-radius: 10px !important;
 }
 
 section[data-testid="stFileUploadDropzone"] * {
@@ -134,22 +110,35 @@ section[data-testid="stFileUploadDropzone"] * {
     color: #94a3b8 !important;
 }
 
+/* Botão de escolha de arquivo dentro da área de upload */
+section[data-testid="stFileUploadDropzone"] button {
+    background-color: #282c3f !important;
+    color: #ffffff !important;
+    border: 1px solid #3b4261 !important;
+    border-radius: 6px !important;
+}
+
+section[data-testid="stFileUploadDropzone"] button:hover {
+    background-color: #3b4261 !important;
+}
+
 /* ------------------------------------------------------------------------------
-   5. BOTÕES (PRIMÁRIOS E SECUNDÁRIOS)
+   6. BOTÕES (NOVA CONVERSA, LISTA E BAIXAR CONVERSA)
    ------------------------------------------------------------------------------ */
-/* Botão "➕ Nova Conversa" */
+/* Botão Primário ("➕ Nova Conversa") */
 .stButton > button[kind="primary"] {
     background-color: #7c3aed !important;
     color: #ffffff !important;
     border: none !important;
     font-weight: 600 !important;
+    border-radius: 8px !important;
 }
 
 .stButton > button[kind="primary"]:hover {
     background-color: #6d28d9 !important;
 }
 
-/* Botões Padrões (Lista de conversas, Baixar Conversa, Deletar) */
+/* Botões Padrões (Navegação da Lista) */
 .stButton > button {
     background-color: #1a1d2d !important;
     color: #ffffff !important;
@@ -162,9 +151,62 @@ section[data-testid="stFileUploadDropzone"] * {
     border-color: #6366f1 !important;
 }
 
+/* Botão Específico: "Baixar Conversa" */
+.stDownloadButton > button {
+    background-color: #1a1d2d !important;
+    color: #ffffff !important;
+    border: 1px solid #282c3f !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+}
+
+.stDownloadButton > button:hover {
+    background-color: #282c3f !important;
+    border-color: #a855f7 !important;
+    color: #ffffff !important;
+}
+
 /* ------------------------------------------------------------------------------
-   6. MENSAGENS E BLOCOS DE CÓDIGO DO CHAT
+   7. ÁREA DE TEXTO E EXPANDER
    ------------------------------------------------------------------------------ */
+div[data-testid="stExpander"] {
+    background-color: #161925 !important;
+    border: 1px solid #282c3f !important;
+    border-radius: 8px !important;
+}
+
+div[data-testid="stExpander"] summary {
+    background-color: #1a1d2d !important;
+    color: #ffffff !important;
+    border-radius: 8px !important;
+}
+
+textarea, input {
+    background-color: #1a1d2d !important;
+    color: #ffffff !important;
+    border: 1px solid #282c3f !important;
+    border-radius: 8px !important;
+}
+
+/* ------------------------------------------------------------------------------
+   8. CAMPO DE ENTRADA DO CHAT & MENSAGENS
+   ------------------------------------------------------------------------------ */
+div[data-testid="stBottom"],
+div[data-testid="stBottom"] > div {
+    background-color: #0f111a !important;
+}
+
+div[data-testid="stChatInput"] {
+    background-color: #1a1d2d !important;
+    border: 1px solid #3b4261 !important;
+    border-radius: 12px !important;
+}
+
+div[data-testid="stChatInput"] textarea {
+    background-color: transparent !important;
+    color: #ffffff !important;
+}
+
 div[data-testid="stChatMessage"] {
     background-color: #1a1d2d !important;
     border: 1px solid #282c3f !important;
@@ -175,10 +217,8 @@ div[data-testid="stChatMessage"] {
 
 div[data-testid="stChatMessage"] *,
 div[data-testid="stChatMessage"] p,
-div[data-testid="stChatMessage"] li,
-div[data-testid="stChatMessage"] span {
+div[data-testid="stChatMessage"] li {
     color: #f8fafc !important;
-    font-size: 0.98rem;
     line-height: 1.6;
 }
 
@@ -189,23 +229,7 @@ div[data-testid="stCodeBlock"] {
     border-radius: 8px !important;
 }
 
-div[data-testid="stCodeBlock"] pre {
-    background-color: transparent !important;
-}
-
 div[data-testid="stCodeBlock"] code {
     color: #38bdf8 !important;
     font-family: 'Fira Code', monospace !important;
-}
-
-div[data-testid="stCodeBlock"] span {
-    color: #f1f5f9 !important;
-}
-
-:not(pre) > code {
-    background-color: #282c3f !important;
-    color: #38bdf8 !important;
-    padding: 2px 6px !important;
-    border-radius: 4px !important;
-    border: 1px solid #3b4261 !important;
 }
