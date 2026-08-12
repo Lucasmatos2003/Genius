@@ -1,5 +1,6 @@
 import base64
 import os
+import uuid
 import streamlit as st
 from google import genai
 from dotenv import load_dotenv
@@ -22,13 +23,28 @@ if not api_key or api_key == "Sua_Chave_De_API_Aqui":
 
 client = genai.Client(api_key=api_key)
 
-if "messages" not in st.session_state:
-    st.session_state["messages"] = []
-if "last_interaction_id" not in st.session_state:
-    st.session_state["last_interaction_id"] = None
+# ==============================================================================
+# 2. GERENCIAMENTO DE CONVERSAS (SESSION STATE)
+# ==============================================================================
+if "chats" not in st.session_state:
+    initial_id = str(uuid.uuid4())
+    st.session_state["chats"] = {
+        initial_id: {
+            "title": "Nova Conversa",
+            "messages": [],
+            "last_interaction_id": None
+        }
+    }
+    st.session_state["current_chat_id"] = initial_id
+
+if "current_chat_id" not in st.session_state or st.session_state["current_chat_id"] not in st.session_state["chats"]:
+    st.session_state["current_chat_id"] = list(st.session_state["chats"].keys())[0]
+
+current_chat_id = st.session_state["current_chat_id"]
+current_chat = st.session_state["chats"][current_chat_id]
 
 # ==============================================================================
-# 2. CARREGAMENTO DE CSS
+# 3. CARREGAMENTO DE CSS
 # ==============================================================================
 def load_css(file_name):
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -40,84 +56,126 @@ def load_css(file_name):
 load_css("style.css")
 
 # ==============================================================================
-# 3. BARRA LATERAL (SEM TÍTULO "CONFIGURAÇÕES")
+# 4. BARRA LATERAL (HISTÓRICO E NAVEGAÇÃO)
 # ==============================================================================
-DEFAULT_SYSTEM_PROMPT = """Você é o Genius, um assistente especialista em programação. Sua missão é ajudar a escrever, corrigir e entender código de forma didática.
+DEFAULT_SYSTEM_PROMPT = """Você é o Genius, um assistente de inteligência artificial multifuncional, didático e solícito. Sua missão é ajudar em qualquer tarefa, estudo, criação ou resolução de problemas.
 
 Diretrizes de Atuação:
-1. Método Educativo: Escreva sempre o código completo e detalhe cada etapa de implementação de maneira simples.
-2. Foco Exclusivo: Responda APENAS a assuntos relacionados com programação. Se o usuário perguntar sobre algo fora deste contexto, peça desculpas educadamente e redirecione para programação.
-3. Tom e Linguagem: Mantém um tom positivo, didático e solícito. Use linguagem clara, acessível para iniciantes.
-4. Estrutura de Resposta:
-   - Compreensão/Perguntas para alinhar o objetivo (se necessário).
-   - Panorama geral da solução.
-   - Código completo pronto para uso e instruções detalhadas de implementação."""
+1. Método Educativo: Explique o raciocínio por trás das respostas em etapas simples e fáceis de entender.
+2. Versatilidade: Responda com excelência sobre qualquer assunto (estudos, escrita, planejamento, análise de imagens ou código).
+3. Tom e Linguagem: Mantenha um tom positivo, claro e acessível.
+4. Estrutura das Respostas:
+   - Panorama geral da solução/resposta.
+   - Detalhamento passo a passo ou código/texto completo quando aplicável.
+   - Instruções práticas de aplicação."""
 
 with st.sidebar:
-    system_instruction = st.text_area(
-        "Instrução do Sistema:",
-        value=DEFAULT_SYSTEM_PROMPT,
-        height=220
-    )
-    
-    temperature = st.slider(
-        "Criatividade (Temperatura):",
-        min_value=0.0,
-        max_value=1.0,
-        value=0.7,
-        step=0.1
-    )
-    
-    st.divider()
-    
-    uploaded_image = st.file_uploader(
-        "Anexar imagem (código ou diagrama):",
-        type=["png", "jpg", "jpeg"]
-    )
-    
-    st.divider()
-    
-    col_clear, col_download = st.columns(2)
-    
-    with col_clear:
-        if st.button("🗑️ Limpar", use_container_width=True):
-            st.session_state["messages"] = []
-            st.session_state["last_interaction_id"] = None
-            st.rerun()
-            
-    with col_download:
-        chat_text = "\n\n".join([f"{m['role'].upper()}: {m['content']}" for m in st.session_state["messages"]])
+    # Botão de Nova Conversa
+    if st.button("➕ Nova Conversa", use_container_width=True, type="primary"):
+        new_id = str(uuid.uuid4())
+        st.session_state["chats"][new_id] = {
+            "title": "Nova Conversa",
+            "messages": [],
+            "last_interaction_id": None
+        }
+        st.session_state["current_chat_id"] = new_id
+        st.rerun()
+
+    st.markdown("---")
+    st.markdown("💬 **Sua Lista de Chats**")
+
+    # Lista de Histórico de Chats
+    for chat_id, chat_data in list(st.session_state["chats"].items()):
+        col_title, col_delete = st.columns([0.82, 0.18])
+        is_selected = (chat_id == current_chat_id)
+        
+        # Indicador visual para chat ativo
+        prefix = "💬 " if not is_selected else "🔹 "
+        display_title = f"{prefix}{chat_data['title']}"
+        if len(display_title) > 22:
+            display_title = display_title[:19] + "..."
+
+        with col_title:
+            if st.button(display_title, key=f"select_{chat_id}", use_container_width=True):
+                st.session_state["current_chat_id"] = chat_id
+                st.rerun()
+
+        with col_delete:
+            if st.button("🗑️", key=f"del_{chat_id}"):
+                del st.session_state["chats"][chat_id]
+                # Se apagou todos, recria um vazio
+                if not st.session_state["chats"]:
+                    fallback_id = str(uuid.uuid4())
+                    st.session_state["chats"][fallback_id] = {
+                        "title": "Nova Conversa",
+                        "messages": [],
+                        "last_interaction_id": None
+                    }
+                    st.session_state["current_chat_id"] = fallback_id
+                elif st.session_state["current_chat_id"] == chat_id:
+                    st.session_state["current_chat_id"] = list(st.session_state["chats"].keys())[0]
+                st.rerun()
+
+    st.markdown("---")
+
+    # Painel Sanfona para Configurações Avançadas (Evita poluição visual)
+    with st.expander("⚙️ Ferramentas & Ajustes", expanded=False):
+        system_instruction = st.text_area(
+            "Instrução do Sistema:",
+            value=DEFAULT_SYSTEM_PROMPT,
+            height=180
+        )
+        
+        temperature = st.slider(
+            "Criatividade (Temperatura):",
+            min_value=0.0,
+            max_value=1.0,
+            value=0.7,
+            step=0.1
+        )
+        
+        uploaded_image = st.file_uploader(
+            "Anexar imagem (código ou diagrama):",
+            type=["png", "jpg", "jpeg"]
+        )
+
+        chat_text = "\n\n".join([f"{m['role'].upper()}: {m['content']}" for m in current_chat["messages"]])
         st.download_button(
-            label="📥 Baixar",
+            label="📥 Baixar Conversa",
             data=chat_text,
-            file_name="genius_chat.txt",
+            file_name=f"{current_chat['title'].lower().replace(' ', '_')}.txt",
             mime="text/plain",
             use_container_width=True
         )
 
 # ==============================================================================
-# 4. CABEÇALHO DO APLICATIVO
+# 5. CABEÇALHO DO APLICATIVO
 # ==============================================================================
 st.markdown('<div class="main-title"><span class="genius-symbol">✦ Genius</span> Studio</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Seu parceiro de inteligência artificial para criar, explicar e corrigir códigos.</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">Seu parceiro de inteligência artificial para criar, explicar e resolver qualquer desafio.</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# 5. HISTÓRICO DE MENSAGENS
+# 6. HISTÓRICO DA CONVERSA ATIVA
 # ==============================================================================
-for message in st.session_state["messages"]:
+for message in current_chat["messages"]:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 # ==============================================================================
-# 6. PROCESSAMENTO DE RESPOSTAS
+# 7. PROCESSAMENTO DE MENSAGENS E CHAT STREAMING
 # ==============================================================================
 if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."):
     
+    # Atualiza o título da conversa se for o primeiro envio
+    if len(current_chat["messages"]) == 0 and current_chat["title"] == "Nova Conversa":
+        clean_title = prompt.strip().capitalize()
+        current_chat["title"] = clean_title[:20] + "..." if len(clean_title) > 20 else clean_title
+
     user_display = prompt
     if uploaded_image:
         user_display = f"📷 *[Imagem Anexada]*\n\n{prompt}"
         
-    st.session_state["messages"].append({"role": "user", "content": user_display})
+    current_chat["messages"].append({"role": "user", "content": user_display})
     with st.chat_message("user"):
         st.markdown(user_display)
 
@@ -141,8 +199,8 @@ if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."
             "stream": True
         }
         
-        if st.session_state["last_interaction_id"]:
-            kwargs["previous_interaction_id"] = st.session_state["last_interaction_id"]
+        if current_chat["last_interaction_id"]:
+            kwargs["previous_interaction_id"] = current_chat["last_interaction_id"]
 
         def stream_response():
             full_text = ""
@@ -150,7 +208,7 @@ if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."
                 stream = client.interactions.create(**kwargs)
                 for event in stream:
                     if hasattr(event, "interaction") and event.interaction:
-                        st.session_state["last_interaction_id"] = event.interaction.id
+                        current_chat["last_interaction_id"] = event.interaction.id
                     
                     if event.event_type == "step.delta" and event.delta:
                         if getattr(event.delta, "type", None) == "text" and getattr(event.delta, "text", None):
@@ -158,7 +216,7 @@ if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."
                             full_text += chunk
                             yield chunk
                 
-                st.session_state["messages"].append({"role": "assistant", "content": full_text})
+                current_chat["messages"].append({"role": "assistant", "content": full_text})
             except Exception as error:
                 st.error(f"Erro na conexão com o Genius: {error}")
 
