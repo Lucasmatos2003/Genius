@@ -3,7 +3,6 @@ import os
 import uuid
 import streamlit as st
 from google import genai
-from google.genai import types
 from dotenv import load_dotenv
 
 # ==============================================================================
@@ -11,7 +10,6 @@ from dotenv import load_dotenv
 # ==============================================================================
 load_dotenv()
 
-# Tenta carregar primeiro das Secrets do Streamlit Cloud, depois do .env local
 api_key = None
 if "GEMINI_API_KEY" in st.secrets:
     api_key = st.secrets["GEMINI_API_KEY"]
@@ -25,10 +23,9 @@ st.set_page_config(
 )
 
 if not api_key or api_key.strip() == "" or api_key == "Sua_Chave_De_API_Aqui":
-    st.error("⚠️ Chave de API não configurada! Adicione a chave GEMINI_API_KEY no painel de Secrets do Streamlit Cloud ou no seu arquivo .env.")
+    st.error("⚠️ Chave de API não configurada! Adicione GEMINI_API_KEY nos Secrets do Streamlit Cloud ou no .env.")
     st.stop()
 
-# Inicializa o cliente diretamente com a chave validada
 client = genai.Client(api_key=api_key)
 
 # ==============================================================================
@@ -39,7 +36,8 @@ if "chats" not in st.session_state:
     st.session_state["chats"] = {
         initial_id: {
             "title": "Nova Conversa",
-            "messages": []
+            "messages": [],
+            "last_interaction_id": None
         }
     }
     st.session_state["current_chat_id"] = initial_id
@@ -49,6 +47,9 @@ if "current_chat_id" not in st.session_state or st.session_state["current_chat_i
 
 current_chat_id = st.session_state["current_chat_id"]
 current_chat = st.session_state["chats"][current_chat_id]
+
+if "last_interaction_id" not in current_chat:
+    current_chat["last_interaction_id"] = None
 
 # ==============================================================================
 # 3. CARREGAMENTO DE CSS
@@ -77,7 +78,8 @@ with st.sidebar:
         new_id = str(uuid.uuid4())
         st.session_state["chats"][new_id] = {
             "title": "Nova Conversa",
-            "messages": []
+            "messages": [],
+            "last_interaction_id": None
         }
         st.session_state["current_chat_id"] = new_id
         st.rerun()
@@ -106,7 +108,8 @@ with st.sidebar:
                     fallback_id = str(uuid.uuid4())
                     st.session_state["chats"][fallback_id] = {
                         "title": "Nova Conversa",
-                        "messages": []
+                        "messages": [],
+                        "last_interaction_id": None
                     }
                     st.session_state["current_chat_id"] = fallback_id
                 elif st.session_state["current_chat_id"] == chat_id:
@@ -120,14 +123,6 @@ with st.sidebar:
             "Instrução do Sistema:",
             value=DEFAULT_SYSTEM_PROMPT,
             height=180
-        )
-        
-        temperature = st.slider(
-            "Criatividade (Temperatura):",
-            min_value=0.0,
-            max_value=1.0,
-            value=0.7,
-            step=0.1
         )
         
         uploaded_image = st.file_uploader(
@@ -158,7 +153,7 @@ for message in current_chat["messages"]:
         st.markdown(message["content"])
 
 # ==============================================================================
-# 7. PROCESSAMENTO DE MENSAGENS E CHAT STREAMING
+# 7. PROCESSAMENTO DE MENSAGENS VIA INTERACTIONS API
 # ==============================================================================
 if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."):
     
@@ -175,39 +170,47 @@ if prompt := st.chat_input("Digite sua pergunta ou cole um trecho de código..."
         st.markdown(user_display)
 
     with st.chat_message("assistant"):
-        contents = []
-        for m in current_chat["messages"]:
-            role = "user" if m["role"] == "user" else "model"
-            contents.append(
-                types.Content(
-                    role=role,
-                    parts=[types.Part.from_text(text=m["content"])]
-                )
-            )
-
+        input_data = []
+        
         if uploaded_image:
             uploaded_image.seek(0)
             image_bytes = uploaded_image.read()
-            contents[-1].parts.insert(0, types.Part.from_bytes(data=image_bytes, mime_type=uploaded_image.type))
+            image_b64 = base64.b64encode(image_bytes).decode("utf-8")
+            input_data.append({
+                "type": "image",
+                "mime_type": uploaded_image.type,
+                "data": image_b64
+            })
+        
+        text_prompt = prompt
+        if not current_chat["last_interaction_id"]:
+            text_prompt = f"[Instruções do Sistema: {system_instruction}]\n\n{prompt}"
+            
+        input_data.append({"type": "text", "text": text_prompt})
 
-        config = types.GenerateContentConfig(
-            system_instruction=system_instruction,
-            temperature=temperature
-        )
+        interaction_kwargs = {
+            "model": "gemini-3.6-flash",
+            "input": input_data,
+            "stream": True
+        }
+        
+        if current_chat["last_interaction_id"]:
+            interaction_kwargs["previous_interaction_id"] = current_chat["last_interaction_id"]
 
         def stream_response():
             full_text = ""
             try:
-                response = client.models.generate_content_stream(
-                    model="gemini-2.5-flash",
-                    contents=contents,
-                    config=config
-                )
-                for chunk in response:
-                    if chunk.text:
-                        full_text += chunk.text
-                        yield chunk.text
-                
+                stream = client.interactions.create(**interaction_kwargs)
+                for event in stream:
+                    if hasattr(event, "interaction") and event.interaction:
+                        current_chat["last_interaction_id"] = event.interaction.id
+                        
+                    if event.event_type == "step.delta" and event.delta:
+                        if getattr(event.delta, "type", None) == "text" and getattr(event.delta, "text", None):
+                            chunk = event.delta.text
+                            full_text += chunk
+                            yield chunk
+                            
                 current_chat["messages"].append({"role": "assistant", "content": full_text})
             except Exception as error:
                 st.error(f"Erro na conexão com o Genius: {error}")
