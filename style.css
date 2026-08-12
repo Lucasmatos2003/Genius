@@ -21,7 +21,7 @@ header[data-testid="stHeader"] * {
 }
 
 /* ------------------------------------------------------------------------------
-   2. CABEÇALHO PRINCIPAL (RESTAURAÇÃO DO DEGRADÊ E BELEZA)
+   2. CABEÇALHO PRINCIPAL
    ------------------------------------------------------------------------------ */
 .main-title {
     font-size: 2.5rem !important;
@@ -77,7 +77,7 @@ div[data-baseweb="select"] > div {
     color: #ffffff !important;
 }
 
-/* Ajuste da seta / ícone do menu suspenso */
+/* Ajuste do ícone/seta do menu suspenso */
 div[data-baseweb="select"] svg {
     fill: #94a3b8 !important;
     color: #94a3b8 !important;
@@ -96,7 +96,7 @@ div[data-baseweb="option"]:hover {
 }
 
 /* ------------------------------------------------------------------------------
-   5. ÁREA DE UPLOAD DE ARQUIVOS (CORREÇÃO DO BLOCO BRANCO)
+   5. ÁREA DE UPLOAD DE ARQUIVOS (CORREÇÃO DO BOTÃO UPLOAD)
    ------------------------------------------------------------------------------ */
 div[data-testid="stFileUploader"] section,
 section[data-testid="stFileUploadDropzone"] {
@@ -105,21 +105,33 @@ section[data-testid="stFileUploadDropzone"] {
     border-radius: 10px !important;
 }
 
-section[data-testid="stFileUploadDropzone"] * {
-    background-color: transparent !important;
+/* Textos informativos de tamanho/tipo de arquivo */
+section[data-testid="stFileUploadDropzone"] span,
+section[data-testid="stFileUploadDropzone"] small,
+section[data-testid="stFileUploadDropzone"] p {
     color: #94a3b8 !important;
 }
 
-/* Botão de escolha de arquivo dentro da área de upload */
-section[data-testid="stFileUploadDropzone"] button {
+/* Botão "Upload" interno */
+section[data-testid="stFileUploadDropzone"] button,
+div[data-testid="stFileUploader"] button {
     background-color: #282c3f !important;
     color: #ffffff !important;
     border: 1px solid #3b4261 !important;
-    border-radius: 6px !important;
+    border-radius: 8px !important;
 }
 
-section[data-testid="stFileUploadDropzone"] button:hover {
+/* Força a visibilidade do texto e ícone do botão interno */
+section[data-testid="stFileUploadDropzone"] button *,
+div[data-testid="stFileUploader"] button * {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+section[data-testid="stFileUploadDropzone"] button:hover,
+div[data-testid="stFileUploader"] button:hover {
     background-color: #3b4261 !important;
+    border-color: #7c3aed !important;
 }
 
 /* ------------------------------------------------------------------------------
