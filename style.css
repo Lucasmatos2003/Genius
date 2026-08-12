@@ -1,136 +1,43 @@
-/* ==========================================================================
-   1. VARIÁVEIS DE TEMA E OCULTAÇÃO DE ELEMENTOS NATIVOS
-   ========================================================================== */
-:root {
-    --bg-app: #000000;
-    --bg-sidebar: #0D0D0D;
-    --bg-card: #171717;
-    --border-card: #262626;
-    --text-color: #FFFFFF;
-    --subtext: #A1A1AA;
+/* ==============================================================================
+   CORREÇÃO DE CONTRASTE E CORES DAS MENSAGENS DE CHAT
+   ============================================================================== */
+
+/* Container da mensagem de chat */
+.stChatMessage {
+    background-color: #181825 !important;
+    border: 1px solid #313244 !important;
+    border-radius: 12px !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
 }
 
-[data-testid="stHeader"], 
-#MainMenu, 
-header, 
-footer,
-[data-testid="manage-app-button"],
-button[title="View app in Streamlit Community Cloud"],
-.stAppDeployButton,
-div[data-testid="stDecoration"] {
-    display: none !important;
-    visibility: hidden !important;
+/* Força a cor clara em todos os textos, parágrafos, listas e spans dentro do chat */
+.stChatMessage p, 
+.stChatMessage li, 
+.stChatMessage span, 
+.stChatMessage div {
+    color: #F1F5F9 !important; /* Branco suave de alto contraste */
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
 }
 
-/* Fundo Principal */
-.stApp {
-    background-color: var(--bg-app) !important;
-    color: var(--text-color) !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-/* ==========================================================================
-   2. BARRA LATERAL (TEXTOS E CAMPOS)
-   ========================================================================== */
-[data-testid="stSidebar"] {
-    background-color: var(--bg-sidebar) !important;
-    border-right: 1px solid var(--border-card) !important;
-}
-
-[data-testid="stSidebar"] label,
-[data-testid="stSidebar"] p,
-[data-testid="stSidebar"] span,
-[data-testid="stSidebar"] [data-testid="stWidgetLabel"] {
+/* Destaque para palavras em negrito */
+.stChatMessage strong {
     color: #FFFFFF !important;
-}
-
-[data-testid="stSidebar"] textarea {
-    background-color: var(--bg-card) !important;
-    color: #FFFFFF !important;
-    border: 1px solid var(--border-card) !important;
-}
-
-/* Área de Upload (Dropzone) */
-[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {
-    background-color: var(--bg-card) !important;
-    border: 1px dashed var(--border-card) !important;
-}
-
-[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] small,
-[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] div {
-    color: var(--subtext) !important;
-}
-
-/* ==========================================================================
-   3. CORREÇÃO DE CONTRASTE DOS BOTÕES DA BARRA LATERAL
-   ========================================================================== */
-/* Força texto e ícones pretos em qualquer botão da barra lateral */
-[data-testid="stSidebar"] button,
-[data-testid="stSidebar"] button *,
-[data-testid="stSidebar"] .stButton > button *,
-[data-testid="stSidebar"] .stDownloadButton > button * {
-    color: #000000 !important;
     font-weight: 600 !important;
 }
 
-[data-testid="stSidebar"] .stButton > button,
-[data-testid="stSidebar"] .stDownloadButton > button,
-[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] button {
-    background-color: #FFFFFF !important;
-    border: 1px solid #E4E4E7 !important;
-    border-radius: 8px !important;
+/* Blocos de código e texto inline */
+.stChatMessage code {
+    background-color: #11111B !important;
+    color: #89B4FA !important;
+    border-radius: 4px !important;
+    padding: 2px 6px !important;
 }
 
-/* ==========================================================================
-   4. CAIXA DE DIGITAÇÃO E MENSAGENS DO CHAT
-   ========================================================================== */
-[data-testid="stBottom"], 
-[data-testid="stBottom"] > div {
-    background-color: var(--bg-app) !important;
-}
-
-[data-testid="stChatInput"],
-[data-testid="stChatInput"] > div,
-div[data-baseweb="input"] {
-    background-color: var(--bg-card) !important;
-    border: 1px solid var(--border-card) !important;
-    border-radius: 12px !important;
-}
-
-[data-testid="stChatInput"] textarea {
-    color: #FFFFFF !important;
-    background-color: transparent !important;
-}
-
-[data-testid="stChatInput"] textarea::placeholder {
-    color: #E4E4E7 !important;
-    opacity: 1 !important;
-}
-
-[data-testid="stChatMessage"] {
-    background-color: var(--bg-card) !important;
-    border: 1px solid var(--border-card) !important;
-    border-radius: 12px !important;
-    color: #FFFFFF !important;
-}
-
-/* ==========================================================================
-   5. MARCA E TÍTULOS
-   ========================================================================== */
-.genius-symbol {
-    color: #8B5CF6 !important;
-    font-weight: bold;
-}
-
-.main-title {
-    font-size: 2.2rem;
-    font-weight: 700;
-    margin-bottom: 0.2rem;
-    color: #FFFFFF !important;
-}
-
-.sub-title {
-    color: var(--subtext) !important;
-    font-size: 0.95rem;
-    margin-bottom: 1.5rem;
+/* Caixas de input e sidebar */
+.stTextInput input, .stTextArea textarea {
+    color: #F1F5F9 !important;
+    background-color: #181825 !important;
+    border: 1px solid #313244 !important;
 }
