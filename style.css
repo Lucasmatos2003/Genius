@@ -1,5 +1,5 @@
 /* ==============================================================================
-   GENIUS STUDIO - TEMA ESCURO COMPLETO (style.css)
+   GENIUS STUDIO - TEMA ESCURO COMPLETO & BLOCOS DE CÓDIGO (style.css)
    ============================================================================== */
 
 /* ------------------------------------------------------------------------------
@@ -193,9 +193,8 @@ section[data-testid="stSidebar"] input {
 }
 
 /* ------------------------------------------------------------------------------
-   8. BARRA DE ENTRADA DO CHAT (CORREÇÃO DO QUADRO BRANCO)
+   8. BARRA DE ENTRADA DO CHAT (RODAPÉ)
    ------------------------------------------------------------------------------ */
-/* Remove fundo do container inferior do Streamlit */
 div[data-testid="stBottom"],
 div[data-testid="stBottom"] > div,
 div[data-testid="stChatInputContainer"] {
@@ -205,7 +204,6 @@ div[data-testid="stChatInputContainer"] {
     box-shadow: none !important;
 }
 
-/* Moldura externa escura */
 div[data-testid="stChatInput"] {
     background-color: #1a1d2d !important;
     border: 1px solid #282c3f !important;
@@ -215,7 +213,6 @@ div[data-testid="stChatInput"] {
     transition: all 0.2s ease-in-out !important;
 }
 
-/* Remove a cor branca dos wrappers internos do Streamlit/BaseWeb */
 div[data-testid="stChatInput"] > div,
 div[data-testid="stChatInput"] div[data-baseweb="base-input"],
 div[data-testid="stChatInput"] div[data-baseweb="input"] {
@@ -223,7 +220,6 @@ div[data-testid="stChatInput"] div[data-baseweb="input"] {
     border: none !important;
 }
 
-/* Área de digitação */
 div[data-testid="stChatInput"] textarea {
     background-color: transparent !important;
     color: #ffffff !important;
@@ -235,13 +231,11 @@ div[data-testid="stChatInput"] textarea::placeholder {
     color: #94a3b8 !important;
 }
 
-/* Efeito de foco quando o usuário clica para digitar */
 div[data-testid="stChatInput"]:focus-within {
     border-color: #7c3aed !important;
     box-shadow: 0 0 14px rgba(124, 58, 237, 0.35) !important;
 }
 
-/* Botão de envio (Seta) */
 div[data-testid="stChatInput"] button {
     background-color: #7c3aed !important;
     border-radius: 10px !important;
@@ -258,8 +252,57 @@ div[data-testid="stChatInput"] button:hover {
 }
 
 /* ------------------------------------------------------------------------------
-   9. MENSAGENS E BLOCOS DE CÓDIGO
+   9. CORREÇÃO DOS BLOCOS DE CÓDIGO E CÓDIGO INLINE
    ------------------------------------------------------------------------------ */
+/* Container externo do bloco de código */
+div[data-testid="stCodeBlock"] {
+    background-color: #0d0e17 !important;
+    border: 1px solid #282c3f !important;
+    border-radius: 10px !important;
+    margin: 1rem 0 !important;
+}
+
+/* Elementos internos do bloco de código */
+div[data-testid="stCodeBlock"] pre,
+div[data-testid="stCodeBlock"] code,
+div[data-testid="stCodeBlock"] div {
+    background-color: #0d0e17 !important;
+    color: #e2e8f0 !important;
+    font-family: 'Fira Code', 'Consolas', monospace !important;
+}
+
+/* Botão de copiar código */
+div[data-testid="stCodeBlock"] button {
+    background-color: #1a1d2d !important;
+    border: 1px solid #282c3f !important;
+    border-radius: 6px !important;
+}
+
+div[data-testid="stCodeBlock"] button * {
+    color: #94a3b8 !important;
+    fill: #94a3b8 !important;
+}
+
+div[data-testid="stCodeBlock"] button:hover * {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+/* Trechos de código inline (ex: `random`, `app.py`) */
+code,
+p code,
+li code,
+span code {
+    background-color: #282c3f !important;
+    color: #c084fc !important;
+    padding: 0.15rem 0.4rem !important;
+    border-radius: 6px !important;
+    font-family: 'Fira Code', 'Consolas', monospace !important;
+    font-size: 0.88em !important;
+    border: 1px solid #3b4261 !important;
+}
+
+/* Mensagens do chat */
 div[data-testid="stChatMessage"] {
     background-color: #1a1d2d !important;
     border: 1px solid #282c3f !important;
@@ -273,15 +316,4 @@ div[data-testid="stChatMessage"] p,
 div[data-testid="stChatMessage"] li {
     color: #f8fafc !important;
     line-height: 1.6;
-}
-
-div[data-testid="stCodeBlock"] {
-    background-color: #0d0e17 !important;
-    border: 1px solid #282c3f !important;
-    border-radius: 8px !important;
-}
-
-div[data-testid="stCodeBlock"] code {
-    color: #38bdf8 !important;
-    font-family: 'Fira Code', monospace !important;
 }
