@@ -1,0 +1,18 @@
+# Variáveis de ambiente e segredos de API
+.env
+
+# Ambientes virtuais do Python
+venv/
+.venv/
+env/
+
+# Arquivos compilados e cache do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Configurações do VS Code e arquivos do sistema operacional
+.vscode/
+.DS_Store
+Thumbs.db

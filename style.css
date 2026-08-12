@@ -1,0 +1,85 @@
+/* ==========================================================================
+   1. OCULTAÇÃO DA INTERFACE NATIVA DO STREAMLIT
+   ========================================================================== */
+[data-testid="stHeader"], #MainMenu, header, footer {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* ==========================================================================
+   2. ESTRUTURA PRINCIPAL E TIPOGRAFIA
+   ========================================================================== */
+.stApp {
+    background-color: var(--bg-app);
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Painel Lateral */
+[data-testid="stSidebar"] {
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-card);
+}
+
+/* ==========================================================================
+   3. COMPONENTES DO CHAT E ÁREA INFERIOR (FIX DO MODO ESCURO)
+   ========================================================================== */
+/* Balões de Mensagem */
+[data-testid="stChatMessage"] {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border-card);
+}
+
+/* Container Fixo Inferior (remove a barra branca do rodapé) */
+[data-testid="stBottom"], 
+[data-testid="stBottom"] > div,
+.stChatInputContainer {
+    background-color: var(--bg-app) !important;
+}
+
+/* Caixa de Digitação do Chat */
+[data-testid="stChatInput"] {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-card) !important;
+    border-radius: 12px !important;
+}
+
+[data-testid="stChatInput"] textarea {
+    color: var(--text-color) !important;
+    background-color: transparent !important;
+}
+
+/* Padronização de Caixas de Texto e Upload da Barra Lateral */
+.stTextArea textarea, 
+[data-testid="stFileUploaderDropzone"] {
+    background-color: var(--bg-card) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-card) !important;
+}
+
+[data-testid="stFileUploaderDropzone"] * {
+    color: var(--text-color) !important;
+}
+
+/* ==========================================================================
+   4. IDENTIDADE VISUAL E TÍTULOS
+   ========================================================================== */
+.genius-symbol {
+    color: #8B5CF6; /* Cor Roxo Violeta exclusiva */
+    font-weight: bold;
+}
+
+.main-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+}
+
+.sub-title {
+    color: var(--subtext);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
