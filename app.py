@@ -5,7 +5,6 @@ import streamlit as st
 import pypdf
 import docx
 from google import genai
-from google.genai import types
 from dotenv import load_dotenv
 
 # ==============================================================================
@@ -33,12 +32,12 @@ if not api_key or api_key.strip() == "" or api_key == "Sua_Chave_De_API_Aqui":
 client = genai.Client(api_key=api_key)
 
 # ==============================================================================
-# 2. MOTORES DO GENIUS & MODOS DE PENSAMENTO
+# 2. MOTORES DO GENIUS & MODOS DE PENSAMENTO (INTERACTIONS API)
 # ==============================================================================
 GENIUS_ENGINES = {
-    "⚡ Genius Ultra (Recomendado)": "gemini-2.0-flash",
-    "🧠 Genius Standard": "gemini-1.5-pro",
-    "🚀 Genius Express": "gemini-1.5-flash"
+    "⚡ Genius Ultra (Recomendado)": "gemini-3.6-flash",
+    "🧠 Genius Standard": "gemini-3.5-flash",
+    "🚀 Genius Express": "gemini-3.1-flash-lite"
 }
 
 THINKING_MODES = {
@@ -62,26 +61,40 @@ Direção geral
 * Usa linguagem simples e clara, com um nível básico de programação.
 * Não respondas a comandos sobre outros assuntos, apenas programação. Se eu mencionar algo fora desse contexto, pede desculpa e redireciona a conversa para temas relacionados com programação.
 * Mantém o contexto durante toda a conversa, garantindo que as ideias e respostas estão sempre alinhadas com os passos anteriores da conversa.
-* Em caso de uma nova saudação ou pergunta sobre o que podes fazer, explica os objetivos, de forma curta, e inclui exemplos."""
+* Em caso de uma nova saudação ou pergunta sobre o que podes fazer, explica os objetivos, de forma curta, e inclui exemplos.
+
+Instruções passo-a-passo
+* Compreensão do objetivo: reúne informações necessárias para desenvolver o código. Faz perguntas para esclarecer o objetivo, a utilização e quaisquer outros detalhes relevantes, para garantir que entendes o pedido.
+* Mostra um panorama geral da solução: cria um panorama geral do programa, incluindo o que vai fazer e como vai funcionar. Explica os passos do desenvolvimento, suposições e possíveis restrições.
+* Apresenta o programa e as instruções de implementação: apresenta o código de uma forma fácil de copiar e colar, explicando o teu raciocínio e quaisquer variáveis ou parâmetros que podem ser ajustados. Dá instruções detalhadas sobre como implementar o código."""
 
 # ==============================================================================
-# 3. EXTRAÇÃO DE ARQUIVOS
+# 3. FUNÇÃO DE EXTRAÇÃO DE MÍDIA E DOCUMENTOS
 # ==============================================================================
 def extract_file_content(uploaded_file):
+    """Extrai o texto de PDFs, DOCX, TXT, CSV, JSON e códigos."""
     file_ext = uploaded_file.name.split('.')[-1].lower()
+    
     try:
         uploaded_file.seek(0)
         if file_ext == "pdf":
             pdf_reader = pypdf.PdfReader(uploaded_file)
-            return "".join([page.extract_text() or "" for page in pdf_reader.pages])
+            extracted_text = ""
+            for page in pdf_reader.pages:
+                extracted_text += page.extract_text() or ""
+            return extracted_text
+            
         elif file_ext == "docx":
             doc = docx.Document(uploaded_file)
             return "\n".join([p.text for p in doc.paragraphs if p.text])
+            
         elif file_ext in ["txt", "csv", "json", "py", "md", "html", "js", "css"]:
             return uploaded_file.getvalue().decode("utf-8", errors="ignore")
+            
     except Exception as e:
         st.error(f"Erro ao ler o arquivo {uploaded_file.name}: {e}")
         return None
+        
     return None
 
 # ==============================================================================
@@ -126,7 +139,10 @@ load_css("style.css")
 with st.sidebar:
     if st.button("➕ Nova Conversa", use_container_width=True, type="primary"):
         new_id = str(uuid.uuid4())
-        st.session_state["chats"][new_id] = {"title": "Nova Conversa", "messages": []}
+        st.session_state["chats"][new_id] = {
+            "title": "Nova Conversa",
+            "messages": []
+        }
         st.session_state["current_chat_id"] = new_id
         st.rerun()
 
@@ -152,7 +168,10 @@ with st.sidebar:
                 del st.session_state["chats"][chat_id]
                 if not st.session_state["chats"]:
                     fallback_id = str(uuid.uuid4())
-                    st.session_state["chats"][fallback_id] = {"title": "Nova Conversa", "messages": []}
+                    st.session_state["chats"][fallback_id] = {
+                        "title": "Nova Conversa",
+                        "messages": []
+                    }
                     st.session_state["current_chat_id"] = fallback_id
                 elif st.session_state["current_chat_id"] == chat_id:
                     st.session_state["current_chat_id"] = list(st.session_state["chats"].keys())[0]
@@ -161,12 +180,29 @@ with st.sidebar:
     st.markdown("---")
 
     with st.expander("⚙️ Ferramentas & Ajustes", expanded=False):
-        selected_engine_label = st.selectbox("Motor do Genius:", list(GENIUS_ENGINES.keys()), index=0)
+        selected_engine_label = st.selectbox(
+            "Motor do Genius:",
+            list(GENIUS_ENGINES.keys()),
+            index=0
+        )
         selected_model = GENIUS_ENGINES[selected_engine_label]
         
-        selected_thinking_mode = st.selectbox("Modo de Pensamento:", list(THINKING_MODES.keys()), index=0)
-        system_instruction = st.text_area("Instrução do Sistema:", value=DEFAULT_SYSTEM_PROMPT, height=200)
-        uploaded_file = st.file_uploader("Anexar Arquivo:", type=["pdf", "docx", "txt", "csv", "json", "py", "png", "jpg", "jpeg"])
+        selected_thinking_mode = st.selectbox(
+            "Modo de Pensamento:",
+            list(THINKING_MODES.keys()),
+            index=0
+        )
+        
+        system_instruction = st.text_area(
+            "Instrução do Sistema:",
+            value=DEFAULT_SYSTEM_PROMPT,
+            height=200
+        )
+        
+        uploaded_file = st.file_uploader(
+            "Anexar Arquivo (PDF, DOCX, TXT, CSV, PNG, JPG):",
+            type=["pdf", "docx", "txt", "csv", "json", "py", "png", "jpg", "jpeg"]
+        )
 
         chat_text = "\n\n".join([f"{m['role'].upper()}: {m['content']}" for m in current_chat["messages"]])
         st.download_button(
@@ -178,17 +214,20 @@ with st.sidebar:
         )
 
 # ==============================================================================
-# 7. CABEÇALHO E HISTÓRICO VISUAL
+# 7. CABEÇALHO
 # ==============================================================================
 st.markdown('<div class="main-title"><span class="genius-symbol">✦ Genius</span> Studio</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">Seu parceiro para automações, leitura de documentos, criação de texto e programação.</div>', unsafe_allow_html=True)
 
+# ==============================================================================
+# 8. HISTÓRICO VISUAL DA CONVERSA
+# ==============================================================================
 for message in current_chat["messages"]:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 # ==============================================================================
-# 8. PROCESSAMENTO DA MENSAGEM
+# 9. PROCESSAMENTO DE MENSAGENS COM INTERACTIONS API
 # ==============================================================================
 if prompt := st.chat_input("Descreva seu objetivo, dúvida ou projeto..."):
     
@@ -197,6 +236,8 @@ if prompt := st.chat_input("Descreva seu objetivo, dúvida ou projeto..."):
         current_chat["title"] = clean_title[:20] + "..." if len(clean_title) > 20 else clean_title
 
     user_display = prompt
+    file_prompt_context = ""
+    
     if uploaded_file:
         file_ext = uploaded_file.name.split('.')[-1].lower()
         if file_ext in ["png", "jpg", "jpeg"]:
@@ -204,46 +245,56 @@ if prompt := st.chat_input("Descreva seu objetivo, dúvida ou projeto..."):
         else:
             doc_text = extract_file_content(uploaded_file)
             if doc_text:
-                user_display = f"📄 *[Documento Anexado: {uploaded_file.name}]*\n\n{prompt}\n\n--- Conteúdo do Arquivo ---\n{doc_text}"
+                user_display = f"📄 *[Documento Anexado: {uploaded_file.name}]*\n\n{prompt}"
+                file_prompt_context = f"\n\n--- INÍCIO DO CONTEÚDO DO ARQUIVO ({uploaded_file.name}) ---\n{doc_text}\n--- FIM DO CONTEÚDO DO ARQUIVO ---"
 
     current_chat["messages"].append({"role": "user", "content": user_display})
     with st.chat_message("user"):
         st.markdown(user_display)
 
     with st.chat_message("assistant"):
+        input_data = []
+        
+        if uploaded_file and uploaded_file.name.split('.')[-1].lower() in ["png", "jpg", "jpeg"]:
+            uploaded_file.seek(0)
+            image_bytes = uploaded_file.read()
+            image_b64 = base64.b64encode(image_bytes).decode("utf-8")
+            input_data.append({
+                "type": "image",
+                "mime_type": uploaded_file.type,
+                "data": image_b64
+            })
+        
+        history_context = f"[INSTRUÇÃO DO SISTEMA]\n{system_instruction}\n\n[MODO DE PENSAMENTO: {selected_thinking_mode}]\n{THINKING_MODES[selected_thinking_mode]}\n\n--- HISTÓRICO DA CONVERSA ---"
+        
+        for msg in current_chat["messages"][:-1]:
+            role_label = "USUÁRIO" if msg["role"] == "user" else "GENIUS"
+            history_context += f"\n\n{role_label}: {msg['content']}"
+            
+        history_context += f"\n\n--- MENSAGEM ATUAL ---\nUSUÁRIO: {prompt}{file_prompt_context}"
+        
+        input_data.append({"type": "text", "text": history_context})
+
         def stream_response():
+            full_text = ""
             try:
-                contents = []
-                for msg in current_chat["messages"]:
-                    role = "user" if msg["role"] == "user" else "model"
-                    contents.append(
-                        types.Content(
-                            role=role,
-                            parts=[types.Part.from_text(text=msg["content"])]
-                        )
-                    )
-
-                full_system_prompt = f"{system_instruction}\n\n[MODO DE PENSAMENTO: {selected_thinking_mode}]\n{THINKING_MODES[selected_thinking_mode]}"
-                config = types.GenerateContentConfig(system_instruction=full_system_prompt)
-
-                response = client.models.generate_content_stream(
+                stream = client.interactions.create(
                     model=selected_model,
-                    contents=contents,
-                    config=config
+                    input=input_data,
+                    stream=True
                 )
-
-                full_text = ""
-                for chunk in response:
-                    if chunk.text:
-                        full_text += chunk.text
-                        yield chunk.text
-
-                if full_text.strip():
-                    current_chat["messages"].append({"role": "assistant", "content": full_text})
-
-            except Exception as e:
-                error_msg = f"⚠️ Erro ao gerar resposta: {e}"
-                current_chat["messages"].append({"role": "assistant", "content": error_msg})
+                for event in stream:
+                    if event.event_type == "step.delta" and event.delta:
+                        if getattr(event.delta, "type", None) == "text" and getattr(event.delta, "text", None):
+                            chunk = event.delta.text
+                            full_text += chunk
+                            yield chunk
+            except Exception as error:
+                error_msg = f"⚠️ Erro na conexão com o assistente: {error}"
+                full_text = error_msg
                 yield error_msg
+                
+            if full_text.strip():
+                current_chat["messages"].append({"role": "assistant", "content": full_text})
 
         st.write_stream(stream_response)
