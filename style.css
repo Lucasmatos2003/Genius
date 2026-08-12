@@ -1,9 +1,9 @@
 /* ==============================================================================
-   GENIUS STUDIO - DESIGN SISTEMA ESCURO PREMIUM (style.css)
+   GENIUS STUDIO - TEMA ESCURO UNIFICADO E BARRA DE ENTRADA (style.css)
    ============================================================================== */
 
 /* ------------------------------------------------------------------------------
-   1. ESTRUTURA GLOBAL E FUNDO
+   1. ESTRUTURA GLOBAL E FUNDO DA PÁGINA
    ------------------------------------------------------------------------------ */
 html, body, .stApp {
     background-color: #0f111a !important;
@@ -54,7 +54,6 @@ div[data-testid="stSidebarContent"] {
     border-right: 1px solid #232738 !important;
 }
 
-/* Rótulos e textos da Sidebar */
 section[data-testid="stSidebar"] label,
 section[data-testid="stSidebar"] p,
 section[data-testid="stSidebar"] span {
@@ -77,13 +76,11 @@ div[data-baseweb="select"] > div {
     color: #ffffff !important;
 }
 
-/* Ajuste do ícone/seta do menu suspenso */
 div[data-baseweb="select"] svg {
     fill: #94a3b8 !important;
     color: #94a3b8 !important;
 }
 
-/* Menu de opções abertas */
 div[data-baseweb="popover"] div,
 div[data-baseweb="menu"] {
     background-color: #1a1d2d !important;
@@ -96,7 +93,7 @@ div[data-baseweb="option"]:hover {
 }
 
 /* ------------------------------------------------------------------------------
-   5. ÁREA DE UPLOAD DE ARQUIVOS (CORREÇÃO DO BOTÃO UPLOAD)
+   5. ÁREA DE UPLOAD DE ARQUIVOS
    ------------------------------------------------------------------------------ */
 div[data-testid="stFileUploader"] section,
 section[data-testid="stFileUploadDropzone"] {
@@ -105,14 +102,12 @@ section[data-testid="stFileUploadDropzone"] {
     border-radius: 10px !important;
 }
 
-/* Textos informativos de tamanho/tipo de arquivo */
 section[data-testid="stFileUploadDropzone"] span,
 section[data-testid="stFileUploadDropzone"] small,
 section[data-testid="stFileUploadDropzone"] p {
     color: #94a3b8 !important;
 }
 
-/* Botão "Upload" interno */
 section[data-testid="stFileUploadDropzone"] button,
 div[data-testid="stFileUploader"] button {
     background-color: #282c3f !important;
@@ -121,7 +116,6 @@ div[data-testid="stFileUploader"] button {
     border-radius: 8px !important;
 }
 
-/* Força a visibilidade do texto e ícone do botão interno */
 section[data-testid="stFileUploadDropzone"] button *,
 div[data-testid="stFileUploader"] button * {
     color: #ffffff !important;
@@ -135,9 +129,8 @@ div[data-testid="stFileUploader"] button:hover {
 }
 
 /* ------------------------------------------------------------------------------
-   6. BOTÕES (NOVA CONVERSA, LISTA E BAIXAR CONVERSA)
+   6. BOTÕES NATIVOS DA SIDEBAR
    ------------------------------------------------------------------------------ */
-/* Botão Primário ("➕ Nova Conversa") */
 .stButton > button[kind="primary"] {
     background-color: #7c3aed !important;
     color: #ffffff !important;
@@ -150,7 +143,6 @@ div[data-testid="stFileUploader"] button:hover {
     background-color: #6d28d9 !important;
 }
 
-/* Botões Padrões (Navegação da Lista) */
 .stButton > button {
     background-color: #1a1d2d !important;
     color: #ffffff !important;
@@ -163,7 +155,6 @@ div[data-testid="stFileUploader"] button:hover {
     border-color: #6366f1 !important;
 }
 
-/* Botão Específico: "Baixar Conversa" */
 .stDownloadButton > button {
     background-color: #1a1d2d !important;
     color: #ffffff !important;
@@ -179,7 +170,7 @@ div[data-testid="stFileUploader"] button:hover {
 }
 
 /* ------------------------------------------------------------------------------
-   7. ÁREA DE TEXTO E EXPANDER
+   7. ÁREA DE TEXTO DA SIDEBAR E EXPANDER
    ------------------------------------------------------------------------------ */
 div[data-testid="stExpander"] {
     background-color: #161925 !important;
@@ -193,7 +184,8 @@ div[data-testid="stExpander"] summary {
     border-radius: 8px !important;
 }
 
-textarea, input {
+section[data-testid="stSidebar"] textarea,
+section[data-testid="stSidebar"] input {
     background-color: #1a1d2d !important;
     color: #ffffff !important;
     border: 1px solid #282c3f !important;
@@ -201,24 +193,66 @@ textarea, input {
 }
 
 /* ------------------------------------------------------------------------------
-   8. CAMPO DE ENTRADA DO CHAT & MENSAGENS
+   8. REDESIGN DA BARRA DE ENTRADA DO CHAT (RODAPÉ)
    ------------------------------------------------------------------------------ */
+/* Remove o fundo branco do wrapper inferior do Streamlit */
 div[data-testid="stBottom"],
-div[data-testid="stBottom"] > div {
+div[data-testid="stBottom"] > div,
+div[data-testid="stChatInputContainer"] {
     background-color: #0f111a !important;
+    background-image: none !important;
+    border-top: none !important;
+    box-shadow: none !important;
 }
 
+/* Caixa principal de digitação */
 div[data-testid="stChatInput"] {
     background-color: #1a1d2d !important;
-    border: 1px solid #3b4261 !important;
-    border-radius: 12px !important;
+    border: 1px solid #282c3f !important;
+    border-radius: 14px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+    padding: 4px 8px !important;
+    transition: all 0.2s ease-in-out !important;
 }
 
+/* Destaque quando o campo está ativo (foco) */
+div[data-testid="stChatInput"]:focus-within {
+    border-color: #7c3aed !important;
+    box-shadow: 0 0 14px rgba(124, 58, 237, 0.3) !important;
+}
+
+/* Área de texto onde o usuário digita */
 div[data-testid="stChatInput"] textarea {
     background-color: transparent !important;
     color: #ffffff !important;
+    font-size: 0.95rem !important;
+    border: none !important;
 }
 
+div[data-testid="stChatInput"] textarea::placeholder {
+    color: #64748b !important;
+}
+
+/* Botão de Envio (Ícone de Seta) */
+div[data-testid="stChatInput"] button {
+    background-color: #7c3aed !important;
+    border-radius: 10px !important;
+    border: none !important;
+    transition: background-color 0.2s ease !important;
+}
+
+div[data-testid="stChatInput"] button * {
+    fill: #ffffff !important;
+    color: #ffffff !important;
+}
+
+div[data-testid="stChatInput"] button:hover {
+    background-color: #6d28d9 !important;
+}
+
+/* ------------------------------------------------------------------------------
+   9. MENSAGENS E BLOCOS DE CÓDIGO
+   ------------------------------------------------------------------------------ */
 div[data-testid="stChatMessage"] {
     background-color: #1a1d2d !important;
     border: 1px solid #282c3f !important;
@@ -234,7 +268,6 @@ div[data-testid="stChatMessage"] li {
     line-height: 1.6;
 }
 
-/* Blocos de Código */
 div[data-testid="stCodeBlock"] {
     background-color: #0d0e17 !important;
     border: 1px solid #282c3f !important;
