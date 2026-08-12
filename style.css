@@ -1,13 +1,30 @@
 /* ==========================================================================
-   1. OCULTAÇÃO DA INTERFACE NATIVA DO STREAMLIT
+   1. VARIÁVEIS DE TEMA (PRETO ABSOLUTO FIXO)
    ========================================================================== */
-[data-testid="stHeader"], #MainMenu, header, footer {
+:root {
+    --bg-app: #000000;
+    --bg-sidebar: #0D0D0D;
+    --bg-card: #171717;
+    --border-card: #262626;
+    --text-color: #F4F4F5;
+    --subtext: #A1A1AA;
+}
+
+/* ==========================================================================
+   2. OCULTAÇÃO DE ELEMENTOS NATIVOS DO STREAMLIT (PARA DEMO)
+   ========================================================================== */
+[data-testid="stHeader"], 
+#MainMenu, 
+header, 
+footer,
+[data-testid="manage-app-button"],
+.stAppDeployButton {
     display: none !important;
     visibility: hidden !important;
 }
 
 /* ==========================================================================
-   2. ESTRUTURA PRINCIPAL E TIPOGRAFIA
+   3. ESTRUTURA PRINCIPAL E TIPOGRAFIA
    ========================================================================== */
 .stApp {
     background-color: var(--bg-app);
@@ -22,7 +39,7 @@
 }
 
 /* ==========================================================================
-   3. COMPONENTES DO CHAT E ÁREA INFERIOR (FIX DO MODO ESCURO)
+   4. COMPONENTES DO CHAT E ÁREA INFERIOR
    ========================================================================== */
 /* Balões de Mensagem */
 [data-testid="stChatMessage"] {
@@ -33,14 +50,14 @@
     border: 1px solid var(--border-card);
 }
 
-/* Container Fixo Inferior (remove a barra branca do rodapé) */
+/* Container Fixo Inferior */
 [data-testid="stBottom"], 
 [data-testid="stBottom"] > div,
 .stChatInputContainer {
     background-color: var(--bg-app) !important;
 }
 
-/* Caixa de Digitação do Chat */
+/* Caixa de Digitação */
 [data-testid="stChatInput"] {
     background-color: var(--bg-card) !important;
     border: 1px solid var(--border-card) !important;
@@ -52,7 +69,7 @@
     background-color: transparent !important;
 }
 
-/* Padronização de Caixas de Texto e Upload da Barra Lateral */
+/* Caixas de Texto e Upload da Barra Lateral */
 .stTextArea textarea, 
 [data-testid="stFileUploaderDropzone"] {
     background-color: var(--bg-card) !important;
@@ -65,7 +82,7 @@
 }
 
 /* ==========================================================================
-   4. IDENTIDADE VISUAL E TÍTULOS
+   5. IDENTIDADE VISUAL E TÍTULOS
    ========================================================================== */
 .genius-symbol {
     color: #8B5CF6; /* Cor Roxo Violeta exclusiva */
