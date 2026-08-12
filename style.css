@@ -1,229 +1,111 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-
 /* ==============================================================================
-   1. TEMA ESCURO GLOBAL
+   GENIUS STUDIO - ESTILOS GERAIS DA APLICAÇÃO (style.css)
    ============================================================================== */
-html, body, .stApp, [data-testid="stAppViewContainer"] {
-    background-color: #0F0F17 !important;
-    color: #F1F5F9 !important;
-    font-family: 'Inter', sans-serif !important;
+
+/* ------------------------------------------------------------------------------
+   1. TEMA GLOBAL E FUNDO DA PÁGINA
+   ------------------------------------------------------------------------------ */
+.stApp {
+    background-color: #0f111a;
+    color: #e0e6ed;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-footer {
-    display: none !important;
-}
-
-/* Esconde o cabeçalho superior padrão e elementos utilitários do Streamlit */
-[data-testid="stHeader"], 
-[data-testid="stToolbar"], 
-[data-testid="stDecoration"],
-[data-testid="stStatusWidget"],
-#MainMenu {
-    display: none !important;
-}
-
-/* ==============================================================================
-   2. FIXAÇÃO DEFINITIVA DA SIDEBAR (IMPEDE DESLOCAMENTO OFF-SCREEN)
-   ============================================================================== */
-section[data-testid="stSidebar"],
-[data-testid="stSidebar"] {
-    display: block !important;
-    visibility: visible !important;
-    transform: none !important;
-    margin-left: 0 !important;
-    background-color: #13131D !important;
-    border-right: 1px solid #2E2D40 !important;
-    min-width: 300px !important;
-    max-width: 300px !important;
-}
-
-[data-testid="stSidebarContent"] {
-    background-color: #13131D !important;
-}
-
-/* Oculta totalmente os botões de alternância (expandir/recolher) */
-[data-testid="stSidebarCollapseButton"],
-[data-testid="stSidebarCollapsedControl"],
-[data-testid="stCollapsedControl"],
-button[aria-label*="sidebar"],
-button[aria-label*="Sidebar"] {
-    display: none !important;
-    visibility: hidden !important;
-}
-
-/* ==============================================================================
-   3. ESTILIZAÇÃO DOS COMPONENTES DA SIDEBAR
-   ============================================================================== */
-[data-testid="stSidebar"] p, 
-[data-testid="stSidebar"] span, 
-[data-testid="stSidebar"] strong,
-[data-testid="stSidebar"] div {
-    color: #FFFFFF !important;
-}
-
-label, 
-[data-testid="stWidgetLabel"], 
-[data-testid="stWidgetLabel"] p, 
-[data-testid="stWidgetLabel"] span {
-    color: #FFFFFF !important;
-    font-weight: 600 !important;
-    font-size: 0.95rem !important;
-}
-
-/* Painéis expansíveis da sidebar */
-[data-testid="stExpander"] {
-    background-color: #181825 !important;
-    border: 1px solid #2E2D40 !important;
-    border-radius: 10px !important;
-}
-
-[data-testid="stExpander"] summary,
-[data-testid="stExpander"] summary p,
-[data-testid="stExpander"] summary span,
-[data-testid="stExpander"] summary svg {
-    color: #FFFFFF !important;
-    fill: #FFFFFF !important;
-    background-color: #181825 !important;
-}
-
-/* Caixa de texto */
-.stTextArea textarea, 
-[data-testid="stTextArea"] textarea {
-    background-color: #181825 !important;
-    color: #FFFFFF !important;
-    border: 1px solid #2E2D40 !important;
-    border-radius: 8px !important;
-}
-
-/* ==============================================================================
-   4. CORREÇÃO ESPECÍFICA DO UPLOAD DE ARQUIVOS (ST.FILE_UPLOADER)
-   ============================================================================== */
-[data-testid="stFileUploader"] {
-    background-color: transparent !important;
-}
-
-/* Área de soltar arquivos (dropzone) */
-[data-testid="stFileUploader"] section,
-[data-testid="stFileUploaderDropzone"] {
-    background-color: #181825 !important;
-    border: 1px dashed #A855F7 !important;
-    border-radius: 10px !important;
-    padding: 0.8rem !important;
-}
-
-/* Textos de instrução e limites (ex: 200MB per file...) */
-[data-testid="stFileUploader"] section small,
-[data-testid="stFileUploader"] section span,
-[data-testid="stFileUploader"] section p,
-[data-testid="stFileUploaderDropzone"] * {
-    color: #CBD5E1 !important;
-}
-
-/* Botão interno de upload ("Browse files" / "Upload") */
-[data-testid="stFileUploader"] button,
-[data-testid="stFileUploaderDropzone"] button {
-    background-color: #252538 !important;
-    color: #FFFFFF !important;
-    border: 1px solid #A855F7 !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-}
-
-/* Garante legibilidade do texto e ícone do botão */
-[data-testid="stFileUploader"] button *,
-[data-testid="stFileUploaderDropzone"] button * {
-    color: #FFFFFF !important;
-    fill: #FFFFFF !important;
-}
-
-/* Efeito ao passar o mouse sobre o botão de upload */
-[data-testid="stFileUploader"] button:hover,
-[data-testid="stFileUploaderDropzone"] button:hover {
-    background-color: #A855F7 !important;
-    color: #FFFFFF !important;
-    border-color: #A855F7 !important;
-}
-
-/* Botões padrões da Sidebar */
-[data-testid="stSidebar"] .stButton > button,
-[data-testid="stSidebar"] .stDownloadButton > button {
-    background-color: #181825 !important;
-    color: #FFFFFF !important;
-    border: 1px solid #2E2D40 !important;
-    border-radius: 8px !important;
-    width: 100% !important;
-}
-
-[data-testid="stSidebar"] .stButton > button:hover {
-    background-color: #252538 !important;
-    border-color: #A855F7 !important;
-}
-
-[data-testid="stSidebar"] .stButton > button[kind="primary"] {
-    background-color: #FF4B4B !important;
-    color: #FFFFFF !important;
-    font-weight: 700 !important;
-    border: none !important;
-}
-
-/* ==============================================================================
-   5. TÍTULOS E ÁREA PRINCIPAL DO CHAT
-   ============================================================================== */
+/* ------------------------------------------------------------------------------
+   2. CABEÇALHO E TÍTULOS
+   ------------------------------------------------------------------------------ */
 .main-title {
-    font-size: 2.4rem !important;
-    font-weight: 800 !important;
-    color: #FFFFFF !important;
-    margin-bottom: 0.2rem !important;
-    margin-top: 1rem !important;
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 0.2rem;
 }
 
 .genius-symbol {
-    color: #A855F7 !important;
-    text-shadow: 0 0 15px rgba(168, 85, 247, 0.6);
+    color: #a855f7;
+    background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .sub-title {
-    font-size: 1rem !important;
-    color: #94A3B8 !important;
-    margin-bottom: 2rem !important;
+    font-size: 0.95rem;
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
 }
 
-/* Mensagens de Chat */
-.stChatMessage {
-    background-color: #181825 !important;
-    border: 1px solid #2E2D40 !important;
-    border-radius: 12px !important;
-    padding: 1rem !important;
-    margin-bottom: 1rem !important;
+/* ------------------------------------------------------------------------------
+   3. BARRA LATERAL (SIDEBAR)
+   ------------------------------------------------------------------------------ */
+section[data-testid="stSidebar"] {
+    background-color: #161925;
+    border-right: 1px solid #232738;
 }
 
-.stChatMessage p, .stChatMessage li, .stChatMessage span {
-    color: #F1F5F9 !important;
+section[data-testid="stSidebar"] .stButton button {
+    border-radius: 8px;
+    font-weight: 500;
 }
 
-/* Campo de Digitação (Prompt) */
-[data-testid="stBottom"],
-[data-testid="stBottomBlockContainer"],
-.stChatInputContainer {
-    background-color: #0F0F17 !important;
-    border-top: 1px solid #2E2D40 !important;
+/* ------------------------------------------------------------------------------
+   4. CAIXAS DE MENSAGENS DO CHAT
+   ------------------------------------------------------------------------------ */
+div[data-testid="stChatMessage"] {
+    background-color: #1a1d2d;
+    border: 1px solid #282c3f;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 0.8rem;
 }
 
-[data-testid="stChatInput"],
-[data-testid="stChatInput"] > div,
-[data-testid="stChatInput"] [data-baseweb="base-input"],
-[data-testid="stChatInput"] [data-baseweb="textarea"] {
-    background-color: #181825 !important;
-    border-color: #313244 !important;
-    border-radius: 10px !important;
+/* ------------------------------------------------------------------------------
+   5. CORREÇÃO DE CONTRASTE PARA BLOCOS DE CÓDIGO (PYTHON, PIP, ETC)
+   ------------------------------------------------------------------------------ */
+
+/* Bloco principal de código */
+div[data-testid="stCodeBlock"] {
+    background-color: #11131f !important;
+    border: 1px solid #2e344e !important;
+    border-radius: 8px !important;
+    margin: 1rem 0 !important;
 }
 
-[data-testid="stChatInput"] textarea {
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF !important;
+/* Formatação do texto e das linhas dentro do bloco */
+div[data-testid="stCodeBlock"] pre {
+    background-color: transparent !important;
+    color: #f8fafc !important;
 }
 
-[data-testid="stChatInput"] button {
-    background-color: #A855F7 !important;
-    color: #FFFFFF !important;
+div[data-testid="stCodeBlock"] code {
+    background-color: transparent !important;
+    color: #38bdf8 !important;
+    font-family: 'Fira Code', 'Consolas', monospace !important;
+}
+
+/* Força a visibilidade das palavras-chave do código */
+div[data-testid="stCodeBlock"] span {
+    color: #f1f5f9 !important;
+}
+
+/* Código destacado no meio do texto (ex: `exemplo`) */
+:not(pre) > code {
+    background-color: #232738 !important;
+    color: #38bdf8 !important;
+    padding: 3px 7px !important;
+    border-radius: 5px !important;
+    font-size: 0.88em !important;
+    border: 1px solid #333950 !important;
+}
+
+/* ------------------------------------------------------------------------------
+   6. CAMPOS DE ENTRADA E BOTÕES DE ENVIO
+   ------------------------------------------------------------------------------ */
+div[data-testid="stChatInput"] {
+    border-radius: 10px;
+    background-color: #1a1d2d;
+    border: 1px solid #282c3f;
+}
+
+textarea, input {
+    color: #ffffff !important;
 }
