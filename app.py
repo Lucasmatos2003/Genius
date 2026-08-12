@@ -5,6 +5,7 @@ import streamlit as st
 import pypdf
 import docx
 from google import genai
+from google.genai import types
 from dotenv import load_dotenv
 
 # ==============================================================================
@@ -35,9 +36,9 @@ client = genai.Client(api_key=api_key)
 # 2. MOTORES DO GENIUS & MODOS DE PENSAMENTO
 # ==============================================================================
 GENIUS_ENGINES = {
-    "⚡ Genius Ultra (Recomendado)": "gemini-3.5-flash",
-    "🧠 Genius Standard": "gemini-2.5-flash",
-    "🚀 Genius Express": "gemini-3.1-flash-lite"
+    "⚡ Genius Ultra (Recomendado)": "gemini-2.5-flash",
+    "🧠 Genius Standard": "gemini-2.5-pro",
+    "🚀 Genius Express": "gemini-2.0-flash"
 }
 
 THINKING_MODES = {
@@ -76,6 +77,7 @@ def extract_file_content(uploaded_file):
     file_ext = uploaded_file.name.split('.')[-1].lower()
     
     try:
+        uploaded_file.seek(0)
         if file_ext == "pdf":
             pdf_reader = pypdf.PdfReader(uploaded_file)
             extracted_text = ""
@@ -110,7 +112,12 @@ if "chats" not in st.session_state:
     st.session_state["current_chat_id"] = initial_id
 
 if "current_chat_id" not in st.session_state or st.session_state["current_chat_id"] not in st.session_state["chats"]:
-    st.session_state["current_chat_id"] = list(st.session_state["chats"].keys())[0]
+    if st.session_state["chats"]:
+        st.session_state["current_chat_id"] = list(st.session_state["chats"].keys())[0]
+    else:
+        new_id = str(uuid.uuid4())
+        st.session_state["chats"] = {new_id: {"title": "Nova Conversa", "messages": []}}
+        st.session_state["current_chat_id"] = new_id
 
 current_chat_id = st.session_state["current_chat_id"]
 current_chat = st.session_state["chats"][current_chat_id]
@@ -234,7 +241,6 @@ if prompt := st.chat_input("Descreva seu objetivo, dúvida ou projeto..."):
     
     if uploaded_file:
         file_ext = uploaded_file.name.split('.')[-1].lower()
-        
         if file_ext in ["png", "jpg", "jpeg"]:
             user_display = f"📷 *[Imagem Anexada: {uploaded_file.name}]*\n\n{prompt}"
         else:
@@ -248,45 +254,44 @@ if prompt := st.chat_input("Descreva seu objetivo, dúvida ou projeto..."):
         st.markdown(user_display)
 
     with st.chat_message("assistant"):
-        input_data = []
+        contents_payload = []
         
         if uploaded_file and uploaded_file.name.split('.')[-1].lower() in ["png", "jpg", "jpeg"]:
             uploaded_file.seek(0)
             image_bytes = uploaded_file.read()
-            image_b64 = base64.b64encode(image_bytes).decode("utf-8")
-            input_data.append({
-                "type": "image",
-                "mime_type": uploaded_file.type,
-                "data": image_b64
-            })
+            contents_payload.append(types.Part.from_bytes(data=image_bytes, mime_type=uploaded_file.type))
         
-        history_context = f"[INSTRUÇÃO DO SISTEMA]\n{system_instruction}\n\n[MODO DE PENSAMENTO: {selected_thinking_mode}]\n{THINKING_MODES[selected_thinking_mode]}\n\n--- HISTÓRICO DA CONVERSA ---"
+        history_context = f"--- HISTÓRICO DA CONVERSA ---"
         
         for msg in current_chat["messages"][:-1]:
             role_label = "USUÁRIO" if msg["role"] == "user" else "GENIUS"
             history_context += f"\n\n{role_label}: {msg['content']}"
             
         history_context += f"\n\n--- MENSAGEM ATUAL ---\nUSUÁRIO: {prompt}{file_prompt_context}"
-        
-        input_data.append({"type": "text", "text": history_context})
+        contents_payload.append(history_context)
+
+        full_system_instruction = f"{system_instruction}\n\n[MODO DE PENSAMENTO: {selected_thinking_mode}]\n{THINKING_MODES[selected_thinking_mode]}"
 
         def stream_response():
             full_text = ""
             try:
-                stream = client.interactions.create(
+                response = client.models.generate_content_stream(
                     model=selected_model,
-                    input=input_data,
-                    stream=True
+                    contents=contents_payload,
+                    config=types.GenerateContentConfig(
+                        system_instruction=full_system_instruction
+                    )
                 )
-                for event in stream:
-                    if event.event_type == "step.delta" and event.delta:
-                        if getattr(event.delta, "type", None) == "text" and getattr(event.delta, "text", None):
-                            chunk = event.delta.text
-                            full_text += chunk
-                            yield chunk
-                            
-                current_chat["messages"].append({"role": "assistant", "content": full_text})
+                for chunk in response:
+                    if chunk.text:
+                        full_text += chunk.text
+                        yield chunk.text
             except Exception as error:
-                st.error(f"Erro na conexão com o assistente: {error}")
+                error_msg = f"⚠️ Erro na conexão com o assistente: {error}"
+                full_text = error_msg
+                yield error_msg
+            
+            if full_text.strip():
+                current_chat["messages"].append({"role": "assistant", "content": full_text})
 
         st.write_stream(stream_response)
