@@ -5,7 +5,6 @@ import streamlit as st
 import pypdf
 import docx
 from google import genai
-from google.genai import types
 from dotenv import load_dotenv
 
 # ==============================================================================
@@ -33,12 +32,12 @@ if not api_key or api_key.strip() == "" or api_key == "Sua_Chave_De_API_Aqui":
 client = genai.Client(api_key=api_key)
 
 # ==============================================================================
-# 2. MOTORES DO GENIUS & MODOS DE PENSAMENTO
+# 2. MOTORES DO GENIUS & MODOS DE PENSAMENTO (INTERACTIONS API)
 # ==============================================================================
 GENIUS_ENGINES = {
-    "⚡ Genius Ultra (Recomendado)": "gemini-2.5-flash",
-    "🧠 Genius Standard": "gemini-2.5-pro",
-    "🚀 Genius Express": "gemini-2.0-flash"
+    "⚡ Genius Ultra (Recomendado)": "gemini-3.6-flash",
+    "🧠 Genius Standard": "gemini-3.5-flash",
+    "🚀 Genius Express": "gemini-3.1-flash-lite"
 }
 
 THINKING_MODES = {
@@ -228,7 +227,7 @@ for message in current_chat["messages"]:
         st.markdown(message["content"])
 
 # ==============================================================================
-# 9. PROCESSAMENTO DE MENSAGENS COM HISTÓRICO RESILIENTE
+# 9. PROCESSAMENTO DE MENSAGENS COM INTERACTIONS API
 # ==============================================================================
 if prompt := st.chat_input("Descreva seu objetivo, dúvida ou projeto..."):
     
@@ -254,43 +253,47 @@ if prompt := st.chat_input("Descreva seu objetivo, dúvida ou projeto..."):
         st.markdown(user_display)
 
     with st.chat_message("assistant"):
-        contents_payload = []
+        input_data = []
         
         if uploaded_file and uploaded_file.name.split('.')[-1].lower() in ["png", "jpg", "jpeg"]:
             uploaded_file.seek(0)
             image_bytes = uploaded_file.read()
-            contents_payload.append(types.Part.from_bytes(data=image_bytes, mime_type=uploaded_file.type))
+            image_b64 = base64.b64encode(image_bytes).decode("utf-8")
+            input_data.append({
+                "type": "image",
+                "mime_type": uploaded_file.type,
+                "data": image_b64
+            })
         
-        history_context = f"--- HISTÓRICO DA CONVERSA ---"
+        history_context = f"[INSTRUÇÃO DO SISTEMA]\n{system_instruction}\n\n[MODO DE PENSAMENTO: {selected_thinking_mode}]\n{THINKING_MODES[selected_thinking_mode]}\n\n--- HISTÓRICO DA CONVERSA ---"
         
         for msg in current_chat["messages"][:-1]:
             role_label = "USUÁRIO" if msg["role"] == "user" else "GENIUS"
             history_context += f"\n\n{role_label}: {msg['content']}"
             
         history_context += f"\n\n--- MENSAGEM ATUAL ---\nUSUÁRIO: {prompt}{file_prompt_context}"
-        contents_payload.append(history_context)
-
-        full_system_instruction = f"{system_instruction}\n\n[MODO DE PENSAMENTO: {selected_thinking_mode}]\n{THINKING_MODES[selected_thinking_mode]}"
+        
+        input_data.append({"type": "text", "text": history_context})
 
         def stream_response():
             full_text = ""
             try:
-                response = client.models.generate_content_stream(
+                stream = client.interactions.create(
                     model=selected_model,
-                    contents=contents_payload,
-                    config=types.GenerateContentConfig(
-                        system_instruction=full_system_instruction
-                    )
+                    input=input_data,
+                    stream=True
                 )
-                for chunk in response:
-                    if chunk.text:
-                        full_text += chunk.text
-                        yield chunk.text
+                for event in stream:
+                    if event.event_type == "step.delta" and event.delta:
+                        if getattr(event.delta, "type", None) == "text" and getattr(event.delta, "text", None):
+                            chunk = event.delta.text
+                            full_text += chunk
+                            yield chunk
             except Exception as error:
                 error_msg = f"⚠️ Erro na conexão com o assistente: {error}"
                 full_text = error_msg
                 yield error_msg
-            
+                
             if full_text.strip():
                 current_chat["messages"].append({"role": "assistant", "content": full_text})
 
